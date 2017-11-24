@@ -15,6 +15,8 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_FeatherOLED.h>
 
+#define VBATPIN A9
+
 Adafruit_FeatherOLED oled = Adafruit_FeatherOLED();
 
 // integer variable to hold current counter value
@@ -119,3 +121,18 @@ void loop()
   }
 
 #endif
+
+
+/*
+ * 
+ * #define VBATPIN A9
+   
+float measuredvbat = analogRead(VBATPIN);
+measuredvbat *= 2;    // we divided by 2, so multiply back
+measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+measuredvbat /= 1024; // convert to voltage
+Serial.print("VBat: " ); Serial.println(measuredvbat);
+ * 
+ * 
+ * /
+ */

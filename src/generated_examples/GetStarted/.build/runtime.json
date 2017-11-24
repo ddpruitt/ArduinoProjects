@@ -1,0 +1,8 @@
+{
+    "azureCliLocation": "C:\\Program Files (x86)\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd",
+    "iotHubName": "IoTHub01-iothub-652c",
+    "subscription": "b1daf48a-98dd-434c-9df7-4b63fb2f5161",
+    "resourceGroup": "IoT_MxChip_DevKit-group-652c",
+    "deviceConnectionString": "HostName=IoTHub01-iothub-652c.azure-devices.net;DeviceId=AZ3166;SharedAccessKey=KCvvT4a4K7WsMxi5RSis6p0PONTGc5kE8MUeESywZVQ=",
+    "deviceId": "AZ3166"
+}

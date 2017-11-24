@@ -1,0 +1,8 @@
+{
+    "azureCliLocation": "C:\\Program Files (x86)\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd",
+    "iotHubName": "prusadevkitremotemonitoring2017111420300",
+    "subscription": "b1daf48a-98dd-434c-9df7-4b63fb2f5161",
+    "resourceGroup": "PrusaDevKitRemoteMonitoring20171114",
+    "deviceConnectionString": "HostName=prusadevkitremotemonitoring2017111420300.azure-devices.net;DeviceId=AZ3166;SharedAccessKey=JledFt/NLRNyiuQAdcBMO2gUOX1eAE/AOIlZttuPGsY=",
+    "deviceId": "AZ3166"
+}
