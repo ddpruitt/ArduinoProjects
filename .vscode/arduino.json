@@ -1,0 +1,5 @@
+{
+    "port": "COM5",
+    "arduino.path": "C:\\Projects\\Arduino\\ArduinoProjects\\src",
+    "board": "arduino:avr:circuitplay32u4cat"
+}
