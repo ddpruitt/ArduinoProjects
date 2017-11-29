@@ -2,7 +2,7 @@
 *  Gobbit Line Command Maze Solving example using "Left Hand Rule"
 *
 * Created by Jason Talley 
-* Last edit 03/24/2017
+* Last edit 10/28/2017
 * Released under GNU agreement
 */
 
@@ -41,10 +41,15 @@
 //    To see how the turns and line following are being done, look into
 //    the GobbitLineCommand.h and .cpp library files.
 
-// If the Adafruit motor shield v2.3 is to be used...
-  // M1 and M2 terminals will be used.  Right motor on M1, Left on M2.
-  // UnComment the next line if you are using the Adafruit shield
-//#define ADAFRUIT_MS 
+// Choose your Motor Driver...
+// To load default settings for either an Ardumoto version 14 or 20, or an Adafruit v2.3,
+// uncomment only the following motor driver define that matches.
+// If none are uncommented, Ardumoto v14 values will be used.
+//
+// DO NOT UNCOMMENT MORE THAN ONE
+//#define ARDUMOTO_14
+//#define ARDUMOTO_20  
+//#define ADAFRUIT_MS
 
 #include <GobbitLineCommand.h>
 
@@ -71,7 +76,7 @@ void setup() {
   // Start the GLC with declared and/or default settings
   MyBot.beginGobbit();
 
-  MyBot.calibrateLineSensor(0);
+  MyBot.calibrateLineSensor();
 }
 
 
@@ -123,7 +128,7 @@ void MazeSolve()
     //  back on the starting line.
     
     // Stop both motors quickly with motor braking (quick reversal of direction)
-    MyBot.brakeMotors(100);
+    MyBot.brakeMotors(100, 'B');
 
     // Do nothing while robot is sitting past the end mark on the white of the course, 
     // waiting to be picked up.

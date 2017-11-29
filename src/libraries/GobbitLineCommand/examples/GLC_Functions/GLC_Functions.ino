@@ -4,7 +4,7 @@
 *	GobbitLineCommand.h
 *	Library for line following, intersection detection, and basic motor control of Gobbit robot.
 *	Created by Jason Talley 
-*	Last edit 03/24/2017
+*	Last edit 10/28/2017
 *	Released under GNU agreement
 */
 
@@ -45,14 +45,19 @@
 */
 
 
-// #define ADAFRUIT_MS if the Adafruit motor shield v2.3 is to be used.
+// Choose your Motor Driver...
+// To load default settings for either an Ardumoto version 14 or 20, or an Adafruit v2.3,
+// uncomment only the following motor driver define that matches.
+// If none are uncommented, it will default to Sparkfun Ardumoto v14 which is a Dir 
+//   and PWM pin driver style driver based upon the L298 driver.  The default pin settings 
+//   will be used except where new values have been declared.
+// If the Adafruit motor shield v2.3 is to be used,
 //   M1 and M2 will be used.  Right motor on M1, Left on M2.
-//   No define will default to Sparkfun Ardumoto or other makes of Dir 
-//   and PWM pin driven style drivers similar to the Ardumoto and those
-//   based upon the L298 driver.  The default pin settings will be used 
-//   except where new values have been declared.
-//   UnComment the next line if you are using the Adafruit shield
-//#define ADAFRUIT_MS 
+//
+// DO NOT UNCOMMENT MORE THAN ONE
+//#define ARDUMOTO_14
+//#define ARDUMOTO_20  
+//#define ADAFRUIT_MS
 
 // include the library in the header of the sketch.
 #include <GobbitLineCommand.h>
@@ -107,7 +112,8 @@ MyBot.catchLine();
 byte isItFound = MyBot.detectLine('L');
 MyBot.move(100, 0); 
 MyBot.setMotors(100, 100); 
-MyBot.brakeMotors(100);
+MyBot.brakeMotors();
+MyBot.brakeMotors(100, 'B');
 MyBot.backup(100,500);
 MyBot.gripOpen();
 MyBot.gripClose();
@@ -346,11 +352,16 @@ MyBot.move(100, 0);
 //    0 stopped 
 MyBot.setMotors(100, 100); 
 
-// Brake motors by a quick reversal of motors to stop motion.  
-// Receives an int value as a percentage of the BRAKING_TIME milliseconds (see config.h). 
-//   0% to 200%.
-MyBot.brakeMotors(100);
+// Brake motors basic function without any arguments. 
+// Uses current motor directions to determine direction and make a quick reversal of motors to stop motion. 
+MyBot.brakeMotors();
 
+// Brake motors expanded function by a quick reversal of motors to stop motion in the declared direction. 
+// Receives an int value as a percentage of the BRAKING_TIME milliseconds, and direction of reversal as character 
+//   0% to 200% percentage
+//   'F'orward, 'B'ackward, 'R'ight, 'L'eft, 'A'uto ... direction is intended as the opposite of the current direction of motion 
+MyBot.brakeMotors(100,'B');
+		
 // Backup with declared speed (100 max) and for a period of milliseconds.
 // This function is intended to be used with the drive() function and expected
 // with the gripper as a method to clear the gripper from objects.
