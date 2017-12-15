@@ -1,0 +1,6 @@
+{
+    "port": "COM5",
+    "arduino.path": "${workspaceRoot}\\src",
+    "board": "arduino:avr:circuitplay32u4cat",
+    "sketch": "src\\Circuit Playground\\PixelPlayground\\PixelPlaygound.ino"
+}

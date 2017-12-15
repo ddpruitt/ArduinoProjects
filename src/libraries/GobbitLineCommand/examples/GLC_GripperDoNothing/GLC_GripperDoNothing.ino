@@ -1,4 +1,4 @@
-/* 02/02/2017
+/* 10/28/2017
  *  
  *  Using the Gobbit robot with line sensor and gripper on pin A0, 
  *  on a simple line course with a 90 degree X where an object is at
@@ -29,13 +29,20 @@
  *   7) Stop at the end of the line (or any found intersection)
  *   8) Open the gripper to release the something
  *   9) Backup a little away from the something
+ *
+ *  To see a video using this sketch:  https://youtu.be/ap2OHx_hRoU?list=PLawtTl1V11Fz_OZYQnIneA7F-aO4kcc6E
  *   
 */
 
-// If the Adafruit motor shield v2.3 is to be used...
-  // M1 and M2 terminals will be used.  Right motor on M1, Left on M2.
-  // UnComment the next line if you are using the Adafruit shield
-//#define ADAFRUIT_MS 
+// Choose your Motor Driver...
+// To load default settings for either an Ardumoto version 14 or 20, or an Adafruit v2.3,
+// uncomment only the following motor driver define that matches.
+// If none are uncommented, Ardumoto v14 values will be used.
+//
+// DO NOT UNCOMMENT MORE THAN ONE
+//#define ARDUMOTO_14
+//#define ARDUMOTO_20  
+//#define ADAFRUIT_MS
 
 
 #include <GobbitLineCommand.h>
@@ -43,6 +50,9 @@
 GobbitLineCommand MyBot;
 
 void setup() {
+  
+  // load default tuning values for battery voltage 
+  MyBot.setBatteryVolts(9);
   
   // attaches the servo on pin 14 which is A0 and sets the angles for Open and Closed Postions
   MyBot.setGripPinOpenClosed(A0,180,70);  
@@ -54,7 +64,7 @@ void setup() {
   MyBot.gripOpen();
 
   // calibrate the line sensor on the line
-  MyBot.calibrateLineSensor(0); 
+  MyBot.calibrateLineSensor(); 
 
   // Start move begins from the leg of X with no object, 
   // with the robot facing middle of X.

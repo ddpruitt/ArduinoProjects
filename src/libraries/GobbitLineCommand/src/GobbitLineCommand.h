@@ -2,7 +2,7 @@
 *	GobbitLineCommand.h
 *	Library for line following, intersection detection, and basic motor control of Gobbit robot.
 *	Created by Jason Talley 
-*	Last edit 03/22/2017
+*	Last edit 10/28/2017
 *	Released under GNU agreement
 */
 
@@ -42,7 +42,13 @@
 
 #include <Arduino.h>
 
-#include <Servo.h>
+// get other library default values
+#include "config.h"
+
+#if SERVO_ENABLE
+	// will use servos
+	#include <Servo.h>
+#endif
 
 // QTRSensors folder must be placed in your arduino libraries folder
 #include <QTRSensors.h>  // Pololu QTR Library 
@@ -66,8 +72,7 @@
 #include "ArdumotoDefaults.h"
 #include "AdafruitMSDefaults.h"
 
-// get other library default values
-#include "config.h"
+
 
 // indicator initial value used to indicate variable has not been set by main program
 #define NOT_SET	9999 
@@ -78,11 +83,11 @@ class GobbitLineCommand
 
 		// functions
 		
-		void setQTRpins(int pin1, int pin2, int pin3, int pin4, int pin5, int pin6, int pin7, int pin8); // use to set qtr sensor pins if default Gobbit wiring will not be used
+		void setQTRpins(unsigned char pin1, unsigned char pin2, unsigned char pin3, unsigned char pin4, unsigned char pin5, unsigned char pin6, unsigned char pin7, unsigned char pin8); // use to set qtr sensor pins if default Gobbit wiring will not be used
 		void setRightMotorPinsDirPWM(int dirPin, int pwmPin);  // sets the Right Motor driver pins for simple direction and PWM style drivers, such as L298 type.
 		void setLeftMotorPinsDirPWM(int dirPin, int pwmPin);  // sets the Left Motor driver pins for simple direction and PWM style drivers, such as L298 type.
 		void setSonar(int analogPin, float range); // sets the Sonar/obstacle avoidance pin# (-1 disables), safe distance/range to maintain for obstacle avaoidance (8 is a good start with no gripper while 1000 is so large it essentially disables any speed adjustments in follow mode)
-		void setGripPinOpenClosed(int pin, int open, int closed); // sets the gripper servo pin#, degree of open position, degree of closed position.
+		//void setGripPinOpenClosed(int pin, int open, int closed); // sets the gripper servo pin#, degree of open position, degree of closed position.
 		void setPID(float kp, float ki, float kd); // sets the fine/basic/small kp, ki, and kd values
 		void setPIDcoarse(float kpC, float kiC, float kdC); // sets the coarse/fast/aggressive kp, ki, and kd values
 		void setPIDfineRange(float fineRange);  // Sets the range of the sensor from then middle to edge that the fine/small PID values should be used. PDfineRange/fraction/portion value from 0-1.0.
@@ -94,7 +99,8 @@ class GobbitLineCommand
 		void setBatteryVolts(float unreadVolts);  // sets the battery voltage which is used for choosing proper pd and motor tunings, this function does not read anything from any pins.
 		void setBeeperPin(int pin);  // sets the beeper pin#.  The beeper functionality is assumed as a simple HIGH/LOW output, therefore, other devices may be used as alternatives.
 		void beginGobbit(void);  // initializes the sensor.  Run in setup loop.  Run all "set" functions and declare variables before running this function.
-		void calibrateLineSensor(int calSpeed); 
+		void calibrateLineSensor(void);  // basic auto mode that will call the advanced using the default calibration speed.
+		void calibrateLineSensor(int calSpeed);
 		void serialPrintCurrentSettings(void);  // serial prints all of the current settings and values. Do not run this in the main program loop because it will loop the restart or the serial connection.
 		void followLine(byte followMode); // line follow with modes 0) follow with no return, 1) follow one motor adjust and return, 3) follow one motor adjust and check for intersection then return, 3) follow until an intersection is found then return
 		void drive(char turn); // Drive receives ('L')eft, ('R')ight, ('F')orward, ('S')top, or ('U')turn request and runs followLine until it is able to complete the turn.
@@ -103,16 +109,24 @@ class GobbitLineCommand
 		void catchLine(void);  // Catch the Line and followLine enough to align to line. This assumes there was some move or other motor command prior.
 		void move(float moveSpeed, float moveTurn); // simple moves without any line following. Typically used with delay statements as sensorless control.
 		void setMotors(float leftVelocity, float rightVelocity); // direct motor control.  Must have run beginGobbit first.
-		void brakeMotors(int bStrength);  // quick reversal of motors to stop motion.  Strength is a percentage of the BRAKING_TIME milliseconds. 0% to 200%.
+		void brakeMotors(void);  // Brake motors without any arguments, Auto choice of strength and direction by a quick reversal of motors to stop motion. 
+		void brakeMotors(int bStrength,char direction);  // Brake motors expanded function by a quick reversal of motors to stop motion in the declared direction.  Strength is a percentage of the BRAKING_TIME milliseconds. 0% to 200%, directin is 'F'orward, 'B'ackward, 'R'ight, 'L'eft, or 'A'uto and intended as the opposite of the current direction of motion.
 		void backup(int speed, int delayTime); // backup with declared speed (100 max) and for a period of milliseconds	
-		void gripClose(void); // closes the gripper to the declared closed angle
-		void gripOpen(void); // opens the gripper to the declared open angle
-		void gripPercentOpen(int openPercent);  // opens the gripper to the declared open percent. 0 is same as closed, 100 is same as fully open	
+		//void gripClose(void); // closes the gripper to the declared closed angle
+		//void gripOpen(void); // opens the gripper to the declared open angle
+		//void gripPercentOpen(int openPercent);  // opens the gripper to the declared open percent. 0 is same as closed, 100 is same as fully open	
 		float readBatteryVolts(int analogPin, float smallResK, float largeResK); // reads the battery voltage on declared analog pin, with voltage divider resistor values in K ohms
 		void checkBattery(int analogPin, float minVoltage, float smallResK, float largeResK); // checks the battery voltage on declared analog pin, cutoff voltage, and resistor values in K for voltage divider
 		void beep(unsigned int count,unsigned int length, byte wait);  // set values for the beeper to be engaged within the main library loops.
 		float readSonarInches(void); // Read the sonar sensor from the set pin and return the current distance in inches.
 		
+		#if SERVO_ENABLE
+			void setGripPinOpenClosed(int pin, int open, int closed); // sets the gripper servo pin#, degree of open position, degree of closed position.
+			void gripClose(void); // closes the gripper to the declared closed angle
+			void gripOpen(void); // opens the gripper to the declared open angle
+			void gripPercentOpen(int openPercent);  // opens the gripper to the declared open percent. 0 is same as closed, 100 is same as fully open
+		#endif
+				
 		// variables
 			
 		// These variables are byte "flags" to indicate if the robot has seen a line to the
@@ -131,6 +145,7 @@ class GobbitLineCommand
 		// The latest range in inches read by sonar sensor.  The drive(), followline(), and readSonarInches() 
 		// all update this value, but setSonar must have been called first.
 		float distanceInch = 0.00;
+		
 		
 	private:
 		
@@ -152,23 +167,60 @@ class GobbitLineCommand
 		unsigned int sensorValues[NUM_SENSORS]; // array with individual sensor reading values
 		unsigned int linePosition = 0; // value from 0-7000 to indicate position of line between sensor 0 - 7
 		unsigned int pastLinePosition = 0;  // value from 0-7000 to indicate position of line between sensor 0 - 7, used for Operation Flux Capacitor
-		unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
+		// **** moved pin defines to #ifdef's for motor driver options
+		//unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
 		
-		// gripper angle limit default values
-		int gripPin = NOT_SET;
-		int gripClosedAngle = NOT_SET;
-		int gripOpenAngle = NOT_SET;
+		#if SERVO_ENABLE
+			// gripper angle limit default values
+			int gripPin = NOT_SET;
+			int gripClosedAngle = NOT_SET;
+			int gripOpenAngle = NOT_SET;
+		#endif
+		
 
-		// Use the Adafruit Motor Shield flag
-		byte useAFMS = USE_AFMS;
+
+		// ****
+		// set pin values if a standard motor driver was defined
+		#ifdef ADAFRUIT_MS
+			// if using adafruit motor shield v2.3 set the pins
+			unsigned char sensorPins[8]={AFV23_QTR0, AFV23_QTR1, AFV23_QTR2, AFV23_QTR3, AFV23_QTR4, AFV23_QTR5, AFV23_QTR6, AFV23_QTR7}; // default values for Gobbit wiring
+			
+			// ***** these will not be used when adafruit driver is declared, only keeping in for now until confirm missing does not break anything
+			int dir_a = 12;  //direction control for Ardumoto outputs A1 and A2 is on digital pin 12  (Left motor)
+			int pwm_a = 3;  //PWM control for Ardumoto outputs A1 and A2 is on digital pin 10  (Left motor)
+			int dir_b = 13;  //direction control for Ardumoto outputs B3 and B4 is on digital pin 13  (Right motor)
+			int pwm_b = 11;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor)
+			
+ 		#elif defined ARDUMOTO_14
+			unsigned char sensorPins[8]={AMV14_QTR0, AMV14_QTR1, AMV14_QTR2, AMV14_QTR3, AMV14_QTR4, AMV14_QTR5, AMV14_QTR6, AMV14_QTR7}; // default values for Gobbit wiring
+			int dir_a = AMV14_DIRA;  //direction control for Ardumoto outputs A1 and A2 is on digital pin 12  (Left motor)
+			int pwm_a = AMV14_PWMA;  //PWM control for Ardumoto outputs A1 and A2 is on digital pin 10  (Left motor)
+			int dir_b = AMV14_DIRB;  //direction control for Ardumoto outputs B3 and B4 is on digital pin 13  (Right motor)
+			int pwm_b = AMV14_PWMB;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor) 
+
+		#elif defined ARDUMOTO_20
+			unsigned char sensorPins[8]={AMV20_QTR0, AMV20_QTR1, AMV20_QTR2, AMV20_QTR3, AMV20_QTR4, AMV20_QTR5, AMV20_QTR6, AMV20_QTR7}; // default values for Gobbit wiring
+			int dir_a = AMV20_DIRA;  //direction control for Ardumoto outputs A1 and A2 is on digital pin 12  (Left motor)
+			int pwm_a = AMV20_PWMA;  //PWM control for Ardumoto outputs A1 and A2 is on digital pin 10  (Left motor)
+			int dir_b = AMV20_DIRB;  //direction control for Ardumoto outputs B3 and B4 is on digital pin 13  (Right motor)
+			int pwm_b = AMV20_PWMB;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor)
 		
-		// ArduMoto motor driver vars
-		// dir_a/b sets direction.  LOW is Forward, HIGH is Reverse
-		// pwm_a/b sets speed.  Value range is 0-255.  For example, if you set the speed at 100 then 100/255 = 39% duty cycle = slow
-		int dir_a = 12;  //direction control for Ardumoto outputs A1 and A2 is on digital pin 12  (Left motor)
-		int pwm_a = 3;  //PWM control for Ardumoto outputs A1 and A2 is on digital pin 10  (Left motor)
-		int dir_b = 13;  //direction control for Ardumoto outputs B3 and B4 is on digital pin 13  (Right motor)
-		int pwm_b = 11;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor)
+		#else
+			unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
+			// for default if nothing was declared, use original ArduMoto motor driver vars
+			// dir_a/b sets direction.  LOW is Forward, HIGH is Reverse
+			// pwm_a/b sets speed.  Value range is 0-255.  For example, if you set the speed at 100 then 100/255 = 39% duty cycle = slow
+			int dir_a = 12;  //direction control for Ardumoto outputs A1 and A2 is on digital pin 12  (Left motor)
+			int pwm_a = 3;  //PWM control for Ardumoto outputs A1 and A2 is on digital pin 10  (Left motor)
+			int dir_b = 13;  //direction control for Ardumoto outputs B3 and B4 is on digital pin 13  (Right motor)
+			int pwm_b = 11;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor) 
+		#endif
+
+		
+		// Use the Adafruit Motor Shield flag
+		// This is a work around
+		byte useAFMS = USE_AFMS;	
+		
 
 		// pid loop vars
 		float error = 0;
