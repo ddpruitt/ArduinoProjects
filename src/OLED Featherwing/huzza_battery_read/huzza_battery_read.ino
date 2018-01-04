@@ -15,7 +15,6 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_FeatherOLED.h>
 
-#define VBATPIN A9
 
 Adafruit_FeatherOLED oled = Adafruit_FeatherOLED();
 
@@ -39,7 +38,7 @@ void loop()
 
   // get the current voltage of the battery from
   // one of the platform specific functions below
-  float battery = getBatteryVoltage();
+  float battery = getBatteryVoltageByDividers();
 
   // update the battery icon
   oled.setBattery(battery);
@@ -60,34 +59,21 @@ void loop()
 
 }
 
-  // esp8266 feather
-  #define VBATPIN A0
 
-  float getBatteryVoltage() {
-
-    float measuredvbat = analogRead(A0);
-
-    measuredvbat *= 2;    // we divided by 2, so multiply back
-    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-    measuredvbat /= 1024; // convert to voltage
-
-    return measuredvbat;
-
-  }
-
-void battery_level() {
- 
+float getBatteryVoltageByDividers() {
   // read the battery level from the ESP8266 analog in pin.
   // analog read level is 10 bit 0-1023 (0V-1V).
-  // our 1M & 220K voltage divider takes the max
+  // our 10K & (3)*560 voltage divider takes the max
   // lipo value of 4.2V and drops it to 0.758V max.
-  // this means our min analog read value should be 580 (3.14V)
-  // and the max analog read value should be 774 (4.2V).
-  int measuredLevel = analogRead(A0);
-  
-  // convert battery level to percent
-  int level = map(measuredLevel, 450, 620, 0, 100);
-  Serial.print("Battery level: ("); Serial.print(measuredLevel); Serial.print(") ");Serial.print(level); Serial.println("%");
-}
+  // this means our min analog read value should be 450 (3.14V)
+  // and the max analog read value should be 600 (4.2V).
+    float measuredvbat = analogRead(A0);
+    float r1 = 10000;
+    float r2 = 3.0 * 560;
+    
+    float calculatedV = (measuredvbat/1024) * (r1 + r2) / r2;
+    return calculatedV;
+
+  }
 
 
