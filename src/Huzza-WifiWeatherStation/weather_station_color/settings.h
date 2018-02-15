@@ -40,7 +40,7 @@ const boolean IS_METRIC = false;
 const String WUNDERGRROUND_API_KEY = "api_key_here";
 const String WUNDERGRROUND_LANGUAGE = "EN";
 const String WUNDERGROUND_COUNTRY = "US";
-const String WUNDERGROUND_CITY = "FL/Royal_Palm_Beach";
+const String WUNDERGROUND_CITY = "TX/Katy";
 
 //Thingspeak Settings
 const String THINGSPEAK_CHANNEL_ID = "67284";
