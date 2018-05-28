@@ -23,9 +23,9 @@ SOFTWARE.
 See more at http://blog.squix.ch
 */
 
-#include <ESP8266WiFi.h>
+#include <ESPWiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266HTTPClient.h>
+#include <ESPHTTPClient.h>
 #include "WundergroundAstronomy.h"
 
 
@@ -37,6 +37,10 @@ void WundergroundAstronomy::setPM(boolean usePM) {
 }
 void WundergroundAstronomy::updateAstronomy(WGAstronomy *astronomy, String apiKey, String language, String country, String city) {
   doUpdate(astronomy, "http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + language + "/q/" + country + "/" + city + ".json");
+}
+
+void WundergroundAstronomy::updateAstronomy(WGAstronomy *astronomy, String apiKey, String language, String zmw) {
+  doUpdate(astronomy, "http://api.wunderground.com/api/" + apiKey + "/astronomy/lang:" + language + "/q/zmw:" + zmw + ".json");
 }
 
 void WundergroundAstronomy::updateAstronomyPWS(WGAstronomy *astronomy, String apiKey, String language, String pws) {
