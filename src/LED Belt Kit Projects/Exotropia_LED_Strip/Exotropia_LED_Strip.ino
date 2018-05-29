@@ -40,38 +40,39 @@ uint32_t Wheel(uint16_t WheelPos);
 void loop() {
 
   // Send a simple pixel chase in...
-  colorChase(strip.Color(127,127,127), 20); // white
-  colorChase(strip.Color(127,0,0), 20);     // red
-  colorChase(strip.Color(127,127,0), 20);   // yellow
-  colorChase(strip.Color(0,127,0), 20);     // green
-  colorChase(strip.Color(0,127,127), 20);   // cyan
-  colorChase(strip.Color(0,0,127), 20);     // blue
-  colorChase(strip.Color(127,0,127), 20);   // magenta
+  colorChase(strip.Color(127,127,127), 60); // white
+  colorChase(strip.Color(127,0,0), 60);     // red
+  colorChase(strip.Color(127,127,0), 60);   // yellow
+  colorChase(strip.Color(0,127,0), 60);     // green
+  colorChase(strip.Color(0,127,127), 60);   // cyan
+  colorChase(strip.Color(0,0,127), 60);     // blue
+  colorChase(strip.Color(127,0,127), 60);   // magenta
 
   // Fill the entire strip with...
-  colorWipe(strip.Color(127,0,0), 20);      // red
-  colorWipe(strip.Color(0, 127,0), 20);     // green
-  colorWipe(strip.Color(0,0,127), 20);      // blue
-  colorWipe(strip.Color(0,0,0), 20);        // black
+  //colorWipe(strip.Color(127,0,0), 20);      // red
+  //colorWipe(strip.Color(0, 127,0), 20);     // green
+  //colorWipe(strip.Color(0,0,127), 20);      // blue
+  //colorWipe(strip.Color(0,0,0), 20);        // black
 
   // Color sparkles
-  dither(strip.Color(0,127,127), 50);       // cyan, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,0,127), 50);       // magenta, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
-  dither(strip.Color(127,127,0), 50);       // yellow, slow
-  dither(strip.Color(0,0,0), 15);           // black, fast
+//  dither(strip.Color(0,127,127), 50);       // cyan, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
+//  dither(strip.Color(127,0,127), 50);       // magenta, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
+//  dither(strip.Color(127,127,0), 50);       // yellow, slow
+//  dither(strip.Color(0,0,0), 15);           // black, fast
 
   // Back-and-forth lights
-  scanner(127,0,0, 30);        // red, slow
-  scanner(0,0,127, 15);        // blue, fast
+  scanner(127,0,0, 50);        // red, slow
+  scanner(0,0,127, 50);        // blue, slow
+  scanner(0,127,0, 50);        // green, slow
 
   // Wavy ripple effects
-  wave(strip.Color(127,0,0), 4, 20);        // candy cane
-  wave(strip.Color(0,0,100), 2, 40);        // icy
+  //wave(strip.Color(127,0,0), 4, 20);        // candy cane
+  //wave(strip.Color(0,0,100), 2, 40);        // icy
 
   // make a pretty rainbow cycle!
-  rainbowCycle(0);  // make it go through the cycle fairly fast
+  //rainbowCycle(0);  // make it go through the cycle fairly fast
 
   // Clear strip data before start of next effect
   for (int i=0; i < strip.numPixels(); i++) {
