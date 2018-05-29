@@ -20,14 +20,6 @@ int clockPin = 15;
 // The LED strips are 32 LEDs per meter but you can extend/cut the strip
 LPD8806 strip = LPD8806(32, dataPin, clockPin);
 
-void setup() {
-  // Start up the LED strip
-  strip.begin();
-
-  // Update the strip, to start they are all 'off'
-  strip.show();
-}
-
 // function prototypes, do not remove these!
 void colorChase(uint32_t c, uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
@@ -37,42 +29,38 @@ void wave(uint32_t c, int cycles, uint8_t wait);
 void rainbowCycle(uint8_t wait);
 uint32_t Wheel(uint16_t WheelPos);
 
+void setup() {
+  // Start up the LED strip
+  strip.begin();
+  randomSeed(analogRead(0));
+  
+  // Update the strip, to start they are all 'off'
+  strip.show();
+}
+
 void loop() {
 
+  int color1,color2,color3;
+  color1 = random(0, 127);
+  color2 = random(0, 127);
+  color3 = random(0, 127);
+
+  colorChase(strip.Color(color1,color2,color3), 60);
+  scanner(color1,color2,color3, 50);
+  
   // Send a simple pixel chase in...
-  colorChase(strip.Color(127,127,127), 60); // white
-  colorChase(strip.Color(127,0,0), 60);     // red
-  colorChase(strip.Color(127,127,0), 60);   // yellow
-  colorChase(strip.Color(0,127,0), 60);     // green
-  colorChase(strip.Color(0,127,127), 60);   // cyan
-  colorChase(strip.Color(0,0,127), 60);     // blue
-  colorChase(strip.Color(127,0,127), 60);   // magenta
-
-  // Fill the entire strip with...
-  //colorWipe(strip.Color(127,0,0), 20);      // red
-  //colorWipe(strip.Color(0, 127,0), 20);     // green
-  //colorWipe(strip.Color(0,0,127), 20);      // blue
-  //colorWipe(strip.Color(0,0,0), 20);        // black
-
-  // Color sparkles
-//  dither(strip.Color(0,127,127), 50);       // cyan, slow
-//  dither(strip.Color(0,0,0), 15);           // black, fast
-//  dither(strip.Color(127,0,127), 50);       // magenta, slow
-//  dither(strip.Color(0,0,0), 15);           // black, fast
-//  dither(strip.Color(127,127,0), 50);       // yellow, slow
-//  dither(strip.Color(0,0,0), 15);           // black, fast
+  //colorChase(strip.Color(127,127,127), 60); // white
+  //colorChase(strip.Color(127,0,0), 60);     // red
+  //colorChase(strip.Color(127,127,0), 60);   // yellow
+  //colorChase(strip.Color(0,127,0), 60);     // green
+  //colorChase(strip.Color(0,127,127), 60);   // cyan
+  //colorChase(strip.Color(0,0,127), 60);     // blue
+  //colorChase(strip.Color(127,0,127), 60);   // magenta
 
   // Back-and-forth lights
-  scanner(127,0,0, 50);        // red, slow
-  scanner(0,0,127, 50);        // blue, slow
-  scanner(0,127,0, 50);        // green, slow
-
-  // Wavy ripple effects
-  //wave(strip.Color(127,0,0), 4, 20);        // candy cane
-  //wave(strip.Color(0,0,100), 2, 40);        // icy
-
-  // make a pretty rainbow cycle!
-  //rainbowCycle(0);  // make it go through the cycle fairly fast
+  //scanner(127,0,0, 50);        // red, slow
+  //scanner(0,0,127, 50);        // blue, slow
+  //scanner(0,127,0, 50);        // green, slow
 
   // Clear strip data before start of next effect
   for (int i=0; i < strip.numPixels(); i++) {
