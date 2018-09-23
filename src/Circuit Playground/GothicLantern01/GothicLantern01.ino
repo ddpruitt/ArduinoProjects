@@ -42,7 +42,7 @@ uint32_t neoPixelColors[10] = {
   0x000000
 };
 
-int brightness = 0;
+int brightness = 20;
 
 void setup() {
   Serial.begin(9600);
@@ -61,7 +61,7 @@ void loop() {
   for(int i=0; i<=9;i++){
     //Serial.println(neoPixelColors[i]);
     CircuitPlayground.setPixelColor(i, neoPixelColors[i]);
-    CircuitPlayground.setBrightness(10);
+    CircuitPlayground.setBrightness(brightness);
   }
   
   delay(100);
