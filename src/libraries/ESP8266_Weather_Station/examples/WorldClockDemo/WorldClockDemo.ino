@@ -24,12 +24,13 @@ See more at https://blog.squix.org
 */
 
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include <Ticker.h>
 #include <JsonListener.h>
-#include "SSD1306Wire.h"
-#include "OLEDDisplayUi.h"
-#include "Wire.h"
-#include "WorldClockClient.h"
+#include <SSD1306Wire.h>
+#include <OLEDDisplayUi.h>
+#include <Wire.h>
+#include <WorldClockClient.h>
 #include "icons.h"
 #include "fonts.h"
 
@@ -91,7 +92,7 @@ void drawProgress(OLEDDisplay *display, int percentage, String label) {
   display->display();
 }
 
-void drawClock(OLEDDisplay *display, int x, int y, int timeZoneIndex, String city, const char* icon) {
+void drawClock(OLEDDisplay *display, int x, int y, int timeZoneIndex, String city, const uint8_t* icon) {
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(ArialMT_Plain_10);
   display->drawString(x + 60, y + 5, city);
