@@ -1,34 +1,5 @@
 #include <Adafruit_CircuitPlayground.h>
 
-/*
-uint32_t neoPixelColors[10] = {
-  0xFF0000,
-  0xFF8000,
-  0xFFFF00,
-  0x80FF00,
-  0x00FF00,
-  0x00FF40,
-  0x00FF80,
-  0x00FFFF,
-  0x0080FF,
-  0x0000FF 
-};
-*/
-/*
- uint32_t neoPixelColors[10] = {
-  0xFF0000,
-  0x808000,
-  0x00FF00,
-  0x008080,
-  0x0000FF,
-  0xFF0000,
-  0x808000,
-  0x00FF00,
-  0x008080,
-  0x0000FF
-};
-*/
-
 uint32_t neoPixelColors[10] = {
   0xFF0000,
   0x808000,
@@ -42,7 +13,7 @@ uint32_t neoPixelColors[10] = {
   0x000000
 };
 
-int brightness = 20;
+int brightness = 254;
 
 void setup() {
   Serial.begin(9600);
@@ -52,17 +23,22 @@ void setup() {
 
 void loop() {
 
-  uint32_t tmp = neoPixelColors[0];
-  for(int i=1; i<=9; i++){
-    neoPixelColors[i-1] = neoPixelColors[i];
+  CircuitPlayground.clearPixels();
+  CircuitPlayground.setBrightness(brightness);
+  for(int led=0; led <10; led++){
+    CircuitPlayground.setPixelColor(led, 0xFF0000);
   }
-  neoPixelColors[9] = tmp;
- 
-  for(int i=0; i<=9;i++){
-    //Serial.println(neoPixelColors[i]);
-    CircuitPlayground.setPixelColor(i, neoPixelColors[i]);
-    CircuitPlayground.setBrightness(brightness);
-  }
-  
   delay(100);
+  
+  for(int red=0; red<=255; red+=5) {
+    for(int green=0; green<=255; green+=5){
+      for(int blue=0; blue <=255; blue+=5){
+        CircuitPlayground.clearPixels();
+        for(int led=0; led <10; led++){
+          CircuitPlayground.setPixelColor(led, red, green, blue);
+        }
+          delay(100);
+      }
+    }
+  }
 }
