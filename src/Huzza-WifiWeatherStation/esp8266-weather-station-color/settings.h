@@ -45,7 +45,7 @@ const int SLEEP_INTERVAL_SECS = 0;   // Going to Sleep after idle times, set 0 f
 // Sign up here to get an API key:
 // https://home.openweathermap.org/users/sign_up
 const boolean IS_METRIC = false;
-String OPEN_WEATHER_MAP_APP_ID = "192e228e86e17a5e8b5b50c320eac383";
+String OPEN_WEATHER_MAP_APP_ID = "1234567890NotReallyReal";
 String OPEN_WEATHER_MAP_LOCATION = "Houston,US";
 
 // Pick a language code from this list:
