@@ -21,8 +21,8 @@ See more at http://blog.squix.ch
 #include <simpleDSTadjust.h>
 
 // Setup
-#define WIFI_SSID "the_ssid"
-#define WIFI_PASS "your_password"
+#define WIFI_SSID "1@HomeNet"
+#define WIFI_PASS "xxxx"
 #define WIFI_HOSTNAME "ThingPulse-weather-station-color"
 
 const int UPDATE_INTERVAL_SECS = 15 * 60; // Update every 10 minutes
@@ -44,9 +44,9 @@ const int SLEEP_INTERVAL_SECS = 0;   // Going to Sleep after idle times, set 0 f
 // OpenWeatherMap Settings
 // Sign up here to get an API key:
 // https://home.openweathermap.org/users/sign_up
-const boolean IS_METRIC = true;
-String OPEN_WEATHER_MAP_APP_ID = "ascowijcawjr390r2834q";
-String OPEN_WEATHER_MAP_LOCATION = "Manhattan,US";
+const boolean IS_METRIC = false;
+String OPEN_WEATHER_MAP_APP_ID = "192e228e86e17a5e8b5b50c320eac383";
+String OPEN_WEATHER_MAP_LOCATION = "Houston,US";
 
 // Pick a language code from this list:
 // Arabic - ar, Bulgarian - bg, Catalan - ca, Czech - cz, German - de, Greek - el,
@@ -66,22 +66,26 @@ const String MONTH_NAMES[] = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "
 const String MOON_PHASES[] = {"New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous",
                               "Full Moon", "Waning Gibbous", "Third quarter", "Waning Crescent"};
 
-#define UTC_OFFSET +1
-struct dstRule StartRule = {"CEST", Last, Sun, Mar, 2, 3600}; // Central European Summer Time = UTC/GMT +2 hours
-struct dstRule EndRule = {"CET", Last, Sun, Oct, 2, 0};       // Central European Time = UTC/GMT +1 hour
+// #define UTC_OFFSET +1
+// struct dstRule StartRule = {"CEST", Last, Sun, Mar, 2, 3600}; // Central European Summer Time = UTC/GMT +2 hours
+// struct dstRule EndRule = {"CET", Last, Sun, Oct, 2, 0};       // Central European Time = UTC/GMT +1 hour
 
 // Settings for Boston
 // #define UTC_OFFSET -5
 // struct dstRule StartRule = {"EDT", Second, Sun, Mar, 2, 3600}; // Eastern Daylight time = UTC/GMT -4 hours
 // struct dstRule EndRule = {"EST", First, Sun, Nov, 1, 0};       // Eastern Standard time = UTC/GMT -5 hour
 
+// Settings for Houston
+#define UTC_OFFSET -6
+struct dstRule StartRule = {"CDT", Second, Sun, Mar, 2, 3600}; // Central Daylight time = UTC/GMT -5 hours
+struct dstRule EndRule = {"CST", First, Sun, Nov, 1, 0};       // Central Standard time = UTC/GMT -6 hour
 
 // Change for 12 Hour/ 24 hour style clock
-bool IS_STYLE_12HR = false;
+bool IS_STYLE_12HR = true;
 
 // change for different ntp (time servers)
-#define NTP_SERVERS "0.ch.pool.ntp.org", "1.ch.pool.ntp.org", "2.ch.pool.ntp.org"
-// #define NTP_SERVERS "us.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
+// #define NTP_SERVERS "0.ch.pool.ntp.org", "1.ch.pool.ntp.org", "2.ch.pool.ntp.org"
+#define NTP_SERVERS "us.pool.ntp.org", "time.nist.gov", "pool.ntp.org"
 
 /***************************
  * End Settings
