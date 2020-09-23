@@ -1,41 +1,21 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2018
+// Copyright Benoit Blanchon 2014-2020
 // MIT License
 
 #pragma once
 
-#include <stdlib.h>
+#include <ArduinoJson/Numbers/convertNumber.hpp>
+#include <ArduinoJson/Numbers/parseNumber.hpp>
+#include <ArduinoJson/Polyfills/type_traits.hpp>
 
-#include "../Configuration.hpp"
-#include "../Polyfills/ctype.hpp"
-
-namespace ArduinoJson {
-namespace Internals {
+namespace ARDUINOJSON_NAMESPACE {
 template <typename T>
 T parseInteger(const char *s) {
-  if (!s) return 0;  // NULL
-
-  if (*s == 't') return 1;  // "true"
-
-  T result = 0;
-  bool negative_result = false;
-
-  switch (*s) {
-    case '-':
-      negative_result = true;
-      s++;
-      break;
-    case '+':
-      s++;
-      break;
-  }
-
-  while (isdigit(*s)) {
-    result = T(result * 10 + T(*s - '0'));
-    s++;
-  }
-
-  return negative_result ? T(~result + 1) : result;
+  // try to reuse the same parameters as JsonDeserializer
+  typedef typename choose_largest<UInt, typename make_unsigned<T>::type>::type
+      TUInt;
+  ParsedNumber<Float, TUInt> value;
+  parseNumber(s, value);
+  return value.template as<T>();
 }
-}  // namespace Internals
-}  // namespace ArduinoJson
+}  // namespace ARDUINOJSON_NAMESPACE

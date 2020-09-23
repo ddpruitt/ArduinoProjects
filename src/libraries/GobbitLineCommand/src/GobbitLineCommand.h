@@ -2,7 +2,7 @@
 *	GobbitLineCommand.h
 *	Library for line following, intersection detection, and basic motor control of Gobbit robot.
 *	Created by Jason Talley 
-*	Last edit 10/28/2017
+*	Last edit 05/04/2019
 *	Released under GNU agreement
 */
 
@@ -51,7 +51,8 @@
 #endif
 
 // QTRSensors folder must be placed in your arduino libraries folder
-#include <QTRSensors.h>  // Pololu QTR Library 
+//#include <QTRSensors.h>  // Pololu QTR Library 
+#include "QTRSensors/QTRSensors.h" //**** use a local copy of Pololu QTR Library for temporary easier install
 
 // #include <Adafruit_MotorShield.h> if it was defined in the main program
 // NOTE the order which IDE compiles is not linear with the way it is written so conditional
@@ -59,7 +60,8 @@
 // default values have to be called after.
 #ifdef ADAFRUIT_MS
 	// if using adafruit motor shield v2.3
-	#include <Adafruit_MotorShield.h>
+	//#include <Adafruit_MotorShield.h>
+	#include "Adafruit_Motor_Shield_V2_Library/Adafruit_MotorShield.h" //**** use a local copy of Adafruit Library for temporary easier install
 	#define USE_AFMS 1
 	//#include "AdafruitMSDefaults.h"	
 #else 
@@ -86,7 +88,7 @@ class GobbitLineCommand
 		void setQTRpins(unsigned char pin1, unsigned char pin2, unsigned char pin3, unsigned char pin4, unsigned char pin5, unsigned char pin6, unsigned char pin7, unsigned char pin8); // use to set qtr sensor pins if default Gobbit wiring will not be used
 		void setRightMotorPinsDirPWM(int dirPin, int pwmPin);  // sets the Right Motor driver pins for simple direction and PWM style drivers, such as L298 type.
 		void setLeftMotorPinsDirPWM(int dirPin, int pwmPin);  // sets the Left Motor driver pins for simple direction and PWM style drivers, such as L298 type.
-		void setSonar(int analogPin, float range); // sets the Sonar/obstacle avoidance pin# (-1 disables), safe distance/range to maintain for obstacle avaoidance (8 is a good start with no gripper while 1000 is so large it essentially disables any speed adjustments in follow mode)
+		void setSonar(int analogPin, float range); // sets the Sonar/obstacle avoidance pin# (-1 disables), safe distance/range to maintain for obstacle avoidance (8 is a good start with no gripper while 1000 is so large it essentially disables any speed adjustments in follow mode)
 		//void setGripPinOpenClosed(int pin, int open, int closed); // sets the gripper servo pin#, degree of open position, degree of closed position.
 		void setPID(float kp, float ki, float kd); // sets the fine/basic/small kp, ki, and kd values
 		void setPIDcoarse(float kpC, float kiC, float kdC); // sets the coarse/fast/aggressive kp, ki, and kd values
@@ -110,7 +112,7 @@ class GobbitLineCommand
 		void move(float moveSpeed, float moveTurn); // simple moves without any line following. Typically used with delay statements as sensorless control.
 		void setMotors(float leftVelocity, float rightVelocity); // direct motor control.  Must have run beginGobbit first.
 		void brakeMotors(void);  // Brake motors without any arguments, Auto choice of strength and direction by a quick reversal of motors to stop motion. 
-		void brakeMotors(int bStrength,char direction);  // Brake motors expanded function by a quick reversal of motors to stop motion in the declared direction.  Strength is a percentage of the BRAKING_TIME milliseconds. 0% to 200%, directin is 'F'orward, 'B'ackward, 'R'ight, 'L'eft, or 'A'uto and intended as the opposite of the current direction of motion.
+		void brakeMotors(int bStrength,char direction);  // Brake motors expanded function by a quick reversal of motors to stop motion in the declared direction.  Strength is a percentage of the BRAKING_TIME milliseconds. 0% to 200%, direction is 'F'orward, 'B'ackward, 'R'ight, 'L'eft, or 'A'uto and intended as the opposite of the current direction of motion.
 		void backup(int speed, int delayTime); // backup with declared speed (100 max) and for a period of milliseconds	
 		//void gripClose(void); // closes the gripper to the declared closed angle
 		//void gripOpen(void); // opens the gripper to the declared open angle
@@ -119,6 +121,7 @@ class GobbitLineCommand
 		void checkBattery(int analogPin, float minVoltage, float smallResK, float largeResK); // checks the battery voltage on declared analog pin, cutoff voltage, and resistor values in K for voltage divider
 		void beep(unsigned int count,unsigned int length, byte wait);  // set values for the beeper to be engaged within the main library loops.
 		float readSonarInches(void); // Read the sonar sensor from the set pin and return the current distance in inches.
+		void  QTRtest(void); // QTRtest serial program.  This has been moved within the library to simplify accessing a local QTRsensors library
 		
 		#if SERVO_ENABLE
 			void setGripPinOpenClosed(int pin, int open, int closed); // sets the gripper servo pin#, degree of open position, degree of closed position.
@@ -168,7 +171,7 @@ class GobbitLineCommand
 		unsigned int linePosition = 0; // value from 0-7000 to indicate position of line between sensor 0 - 7
 		unsigned int pastLinePosition = 0;  // value from 0-7000 to indicate position of line between sensor 0 - 7, used for Operation Flux Capacitor
 		// **** moved pin defines to #ifdef's for motor driver options
-		//unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
+		//unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // default values for Gobbit wiring
 		
 		#if SERVO_ENABLE
 			// gripper angle limit default values
@@ -206,7 +209,7 @@ class GobbitLineCommand
 			int pwm_b = AMV20_PWMB;  //PWM control for Ardumoto outputs B3 and B4 is on digital pin 11  (Right motor)
 		
 		#else
-			unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
+			unsigned char sensorPins[8]={2, 4, 5, 6, 7, 8, 9, 10}; // default values for Gobbit wiring
 			// for default if nothing was declared, use original ArduMoto motor driver vars
 			// dir_a/b sets direction.  LOW is Forward, HIGH is Reverse
 			// pwm_a/b sets speed.  Value range is 0-255.  For example, if you set the speed at 100 then 100/255 = 39% duty cycle = slow
@@ -223,6 +226,8 @@ class GobbitLineCommand
 		
 
 		// pid loop vars
+		unsigned long mLastTime;
+		unsigned long mSampleTime = PROCESS_TIME;
 		float error = 0;
 		float lastError = 0;
 		float iAccumError = 0;	

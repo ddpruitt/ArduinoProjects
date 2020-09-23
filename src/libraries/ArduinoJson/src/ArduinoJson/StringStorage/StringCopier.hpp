@@ -1,25 +1,58 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2018
+// Copyright Benoit Blanchon 2014-2020
 // MIT License
 
 #pragma once
 
-namespace ArduinoJson {
-namespace Internals {
+#include <ArduinoJson/Memory/MemoryPool.hpp>
 
-template <typename TMemoryPool>
+namespace ARDUINOJSON_NAMESPACE {
+
 class StringCopier {
  public:
-  StringCopier(TMemoryPool& memoryPool) : _memoryPool(&memoryPool) {}
-
-  typedef typename TMemoryPool::String String;
-
-  String startString() {
-    return _memoryPool->startString();
+  void startString(MemoryPool* pool) {
+    pool->getFreeZone(&_ptr, &_capacity);
+    _size = 0;
   }
 
+  const char* save(MemoryPool* pool) {
+    ARDUINOJSON_ASSERT(_ptr);
+    return pool->saveStringFromFreeZone(_size);
+  }
+
+  void append(const char* s) {
+    while (*s) append(*s++);
+  }
+
+  void append(const char* s, size_t n) {
+    while (n-- > 0) append(*s++);
+  }
+
+  void append(char c) {
+    if (!_ptr)
+      return;
+
+    if (_size >= _capacity) {
+      _ptr = 0;
+      return;
+    }
+
+    _ptr[_size++] = c;
+  }
+
+  bool isValid() {
+    return _ptr != 0;
+  }
+
+  const char* c_str() {
+    return _ptr;
+  }
+
+  typedef storage_policies::store_by_copy storage_policy;
+
  private:
-  TMemoryPool* _memoryPool;
+  char* _ptr;
+  size_t _size;
+  size_t _capacity;
 };
-}  // namespace Internals
-}  // namespace ArduinoJson
+}  // namespace ARDUINOJSON_NAMESPACE

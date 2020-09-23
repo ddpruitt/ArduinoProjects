@@ -1,4 +1,4 @@
-# Adafruit ILI9341 Arduino Library [![Build Status](https://travis-ci.org/adafruit/Adafruit_ILI9341.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit_ILI9341)
+# Adafruit ILI9341 Arduino Library [![Build Status](https://github.com/adafruit/Adafruit_ILI9341/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_ILI9341/actions)[![Documentation](https://github.com/adafruit/ci-arduino/blob/master/assets/doxygen_badge.svg)](http://adafruit.github.io/Adafruit_ILI9341/html/index.html)
 
 This is a library for the Adafruit ILI9341 display products
 
@@ -20,6 +20,9 @@ TFT FeatherWing - 2.4" 320x240 Touchscreen For All Feathers
 Check out the links above for our tutorials and wiring diagrams.
 These displays use SPI to communicate, 4 or 5 pins are required
 to interface (RST is optional).
+
+**BMP image-loading examples have been moved to the Adafruit_ImageReader library:**
+https://github.com/adafruit/Adafruit_ImageReader
 
 Adafruit invests time and resources providing this open source code,
 please support Adafruit and open-source hardware by purchasing

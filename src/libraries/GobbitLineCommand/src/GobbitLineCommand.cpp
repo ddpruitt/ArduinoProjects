@@ -2,7 +2,7 @@
 *	GobbitLineCommand.h
 *	Library for line following, intersection detection, and basic motor control of Gobbit robot.
 *	Created by Jason Talley 
-*	Last edit 09/18/2017
+*	Last edit 05/04/2019
 *	Released under GNU agreement
 */
 
@@ -40,13 +40,13 @@
 //QTRSensors library must be loaded to your arduino libraries folder.
 // Easiest to use the library manager to install
 // later releases may be able to auto load if this library is made accessible in arduino library manager.
-#include <QTRSensors.h> // Pololu QTR Library
+//#include <QTRSensors.h> // Pololu QTR Library 
+#include "QTRSensors/QTRSensors.h" //**** use a local copy of Pololu QTR Library for temporary easier install
 
 #include "GobbitLineCommand.h"
 #include "config.h"
 #include "AdafruitMSDefaults.h"
 #include "ArdumotoDefaults.h"
-
 
 #if SERVO_ENABLE
 	#include <Servo.h>
@@ -56,9 +56,10 @@
 #endif
 
 // load Adafruit Motor Shield library and initialize objects
-//     NOTE cannot access USE_AFMS or status of ADAFRUIT_MS from main sketch for conditinal loading of AFMS library.
+//     NOTE cannot access USE_AFMS or status of ADAFRUIT_MS from main sketch for conditional loading of AFMS library.
 //     This is a limitation of the arduino IDE compiler, and it does not appear to be adopted in the future.
-#include <Adafruit_MotorShield.h>
+//#include <Adafruit_MotorShield.h>
+#include "Adafruit_Motor_Shield_V2_Library/Adafruit_MotorShield.h" //**** use a local copy of Adafruit Library for temporary easier install
 
 // #define ADAFRUIT_MS in main program if the Adafruit motor shield v2.3 is to be used.
 // M1 and M2 will be used.  Right motor on M1, Left on M2.
@@ -91,6 +92,10 @@ void GobbitLineCommand::beginGobbit(void)
 	// initialize sensor
 	qtrrc.init(sensorPins, NUM_SENSORS, TIME_OUT, EMITTER_PIN);
 	delay(500); // give sensors time to set
+	
+	// set reference time for PID loop
+	// **** not sure if this is necessary or needed here
+	mLastTime = millis()-mSampleTime;
 
 	if (volts == NOT_SET) {
 		volts = 9;
@@ -507,7 +512,7 @@ void GobbitLineCommand::drive(char turnDir)
 //
 //      If setSonar has been called and a valid pin was set for the sensor, followLine also reads the sonar,
 //      updates the distanceInch variable, and controls/slows down the motor speed per the range of safe distance
-//      everytime it is called
+//      every time it is called
 void GobbitLineCommand::followLine(byte followMode)
 {
 
@@ -531,13 +536,13 @@ void GobbitLineCommand::followLine(byte followMode)
 		runOnce = 1;
 		break;
 		
-	// follow for one motor adjustment and check if there was an intersction found then return
+	// follow for one motor adjustment and check if there was an intersection found then return
 	case 2:
 		findIntersection = 1;
 		runOnce = 1;
 		break;	
 	
-	// follow until an intersction is found then return
+	// follow until an intersection is found then return
 	case 3:
 		findIntersection = 1;
 		runOnce = 0;
@@ -563,7 +568,7 @@ void GobbitLineCommand::followLine(byte followMode)
 		// adjusted that had been leading to an exaggerated "twirk" when crossing the intersections.
 		// "Twirk" is a result of fast reaction of bot to early or uneven sensor reads from seeing
 		// part of an intersection before other parts since it would only not "twirk" if the intersection
-		// was perfecting entered with all sensors reading simulataneously, which could almost never 
+		// was perfecting entered with all sensors reading simultaneously, which could almost never 
 		// be the case since they are read in series.
 
 		// tried this array before with a larger buffer, but it did not seem to work well.
@@ -580,7 +585,7 @@ void GobbitLineCommand::followLine(byte followMode)
 
 		offLine = 0;
 
-		// read calibrated sensor values and obtain a measure of the currnet line position from 0 to 7000.
+		// read calibrated sensor values and obtain a measure of the current line position from 0 to 7000.
 		linePosition = qtrrc.readLine(sensorValues);
 
 		// simple line following portion for way off line adjustment
@@ -611,7 +616,7 @@ void GobbitLineCommand::followLine(byte followMode)
 			// The line is still within the sensors.
 			// This will calculate adjusting speed to keep the line in center.
 
-			// If followLine was called in a mode which is to check for intersctions, then check
+			// If followLine was called in a mode which is to check for intersections, then check
 			if (findIntersection) {	
 				// if an intersection is found then the found flags will be updated and will exit followLine
 				if(detectIntersection())
@@ -638,46 +643,63 @@ void GobbitLineCommand::followLine(byte followMode)
 				kdCurrent = _kd;
 			}
 			
-			// update iAccumError accumulated error
-			iAccumError = iAccumError+error;
-
-			// calculate the new Process Variable
-			// this is the value that will be used to alter the speeds
-			PV = kpCurrent * error + kiCurrent*iAccumError + kdCurrent * (error - lastError);
 			
-			lastError = error;
+#if PROCESS_TIME
+			// added time check here to run only if PROCESS_TIME IS greater than 0
+			unsigned long mCurrentTime = millis();
+			unsigned long mCurrentDuration = (mCurrentTime - mLastTime);
+			if(mCurrentDuration>=mSampleTime){
+#endif
+			
+				// update iAccumError accumulated error
+				iAccumError = iAccumError+error;
 
-			//this code limits the PV (motor speed pwm value)
-			// limit PV to maxSpeed - minSpeed
-			if (PV > (maxSpeed - minSpeed)) {
-				PV = (maxSpeed - minSpeed);
+				// calculate the new Process Variable
+				// this is the value that will be used to alter the speeds
+				PV = kpCurrent * error + kiCurrent*iAccumError + kdCurrent * (error - lastError);
+				
+				lastError = error;
+
+				//this code limits the PV (motor speed pwm value)
+				// limit PV to maxSpeed - minSpeed
+				if (PV > (maxSpeed - minSpeed)) {
+					PV = (maxSpeed - minSpeed);
+				}
+
+				if (PV < -(maxSpeed - minSpeed)) {
+					PV = -(maxSpeed - minSpeed);
+				}
+
+				// run beeper cycle
+				beepCycle();
+
+				if (useRangeSensor) 
+					obstacleSpeedFactor = speedAdjust(readSonarInches());
+				else
+					obstacleSpeedFactor = 1;
+
+				if (PV > 0) {
+					RmotorSpeed = maxSpeed * obstacleSpeedFactor;
+					LmotorSpeed = (maxSpeed - abs(PV)) * obstacleSpeedFactor;
+				}
+
+				if (PV < 0) {
+					RmotorSpeed = (maxSpeed - abs(PV)) * obstacleSpeedFactor;
+					LmotorSpeed = maxSpeed * obstacleSpeedFactor;
+				}
+
+				//set motor speeds
+				setMotors(LmotorSpeed, RmotorSpeed);
+
+#if PROCESS_TIME				
+				mLastTime = mCurrentTime;
+				
 			}
-
-			if (PV < -(maxSpeed - minSpeed)) {
-				PV = -(maxSpeed - minSpeed);
-			}
-
-			// run beeper cycle
-			beepCycle();
-
-			if (useRangeSensor) 
-				obstacleSpeedFactor = speedAdjust(readSonarInches());
-			else
-				obstacleSpeedFactor = 1;
-
-			if (PV > 0) {
-				RmotorSpeed = maxSpeed * obstacleSpeedFactor;
-				LmotorSpeed = (maxSpeed - abs(PV)) * obstacleSpeedFactor;
-			}
-
-			if (PV < 0) {
-				RmotorSpeed = (maxSpeed - abs(PV)) * obstacleSpeedFactor;
-				LmotorSpeed = maxSpeed * obstacleSpeedFactor;
-			}
-
-			//set motor speeds
-			setMotors(LmotorSpeed, RmotorSpeed);
+			else beepCycle(); // run beeper cycle
+#endif
+			
 		}
+		
 
 		// Exit followLine if it is in a single adjustment mode
 		if(runOnce)
@@ -1171,7 +1193,7 @@ void GobbitLineCommand::backup(int speed, int delayTime)
 //-----------------
 // Sets the battery voltage which is used for choosing proper pd and motor tunings.
 // This function does not read from any pins.
-// 0 will force default of 9volt setttings
+// 0 will force default of 9volt settings
 void GobbitLineCommand::setBatteryVolts(float unreadVolts)
 {
 
@@ -1816,7 +1838,7 @@ void GobbitLineCommand::brakeMotors(int bStrength,char direction)
 //   devices other than beepers could be controlled by this function.
 void GobbitLineCommand::setBeeperPin(int pin)
 {
-	// set pin mode for peizo style beeper
+	// set pin mode for piezo style beeper
 	pinMode(pin, OUTPUT);
 
 	// only used as flag and feedback for serialPrintCurrentSettings
@@ -2067,5 +2089,56 @@ void GobbitLineCommand::resetIntFlags(byte resetMark)
 	foundRight = 0;
 	foundEnd = 0;
 	brakeNext = 0;
+	
+}
+
+
+//-----------------
+// QTRtest serial program
+// this has been moved within the library to simplify accessing a local QTRsensors library
+void GobbitLineCommand::QTRtest(void)
+{
+  Serial.begin(115200);
+
+  Serial.println("Gobbit Line Command");
+  Serial.println("QTR line sensor Test");
+  //Serial.print("Version ");
+  //Serial.println(SKETCH_VERSION);
+  Serial.println();
+
+  delay(2500);
+
+	while(1){
+	// This will print the sensor numbers. If needed uncomment.
+	//Serial.println("8 7 6 5 4 3 2 1 ");
+
+	// read raw sensor values.
+	qtrrc.read(sensorValues);
+
+	// print indicators if the sensor sees the line
+	for (int i = NUM_SENSORS - 1; i >= 0; i--)
+	{
+		if (sensorValues[i] > 600)
+		{
+			if (sensorValues[i] > 1000)
+		{
+		Serial.print("XX");
+		}
+		else Serial.print("--");
+	}
+	else Serial.print("__");
+	}
+	Serial.println();
+
+	// This will print the raw sensor values. If needed, uncomment.
+	//   for (int i = NUM_SENSORS-1; i >= 0; i--)
+	//  {
+	//    Serial.print(sensorValues[i]);
+	//    Serial.print("  ");
+	//  }
+	//  Serial.println();
+
+	delay(20);
+	}
 	
 }

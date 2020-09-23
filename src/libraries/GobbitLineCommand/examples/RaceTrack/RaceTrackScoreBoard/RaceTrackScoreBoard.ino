@@ -1,4 +1,4 @@
-/* 09/18/2017
+/* 10/25/2018
 
   This program is for a laser line start/finish line for a Gobbit robot race course with serial monitoring.
 
@@ -46,6 +46,8 @@
 #define FLAG_UP_ANGLE 8
 #define FLAG_SWING_ANGLE 40
 #define FLAG_DOWN_ANGLE 120
+
+#define LDR_TRIGGER_LEVEL  500 // 0-1023, probably near 400, when it goes below this level it will trigger
 
 #include <Servo.h>
 
@@ -105,7 +107,7 @@ void setup()
 
   Serial.begin(115200);   //start the serial monitor
 
-  delay(1000); // time for laser light level to stablize after servos draw power so a flase trigger is not made
+  delay(1000); // time for laser light level to stabilize after servos draw power so a false trigger is not made
 
   Serial.println();
   Serial.println(F("Typing c and hitting SEND or enter from the terminal prompt at any time will CANCEL the current race"));
@@ -136,7 +138,7 @@ void loop()
         if(checkIfCancel()) return;
         
         // check if left lane has crossed line and stop it  
-        if(analogRead(LDR_L) > 400 && lapCountL < 0){
+        if(analogRead(LDR_L) > LDR_TRIGGER_LEVEL && lapCountL < 0){
           // beep buzzer
           digitalWrite(BEEP_PIN, HIGH);
            
@@ -160,7 +162,7 @@ void loop()
         }
     
         // check if right lane has crossed line and stop it
-        if(analogRead(LDR_R) > 400 && lapCountR < 0){
+        if(analogRead(LDR_R) > LDR_TRIGGER_LEVEL && lapCountR < 0){
           // beep buzzer
           digitalWrite(BEEP_PIN, HIGH);
            
@@ -250,6 +252,8 @@ void loop()
       }
       greenFlagServo.write(FLAG_DOWN_ANGLE);
       start=0;
+	  
+	  delay(3000); // delay to allow power fluctuations from servos to stabilize and not cause false trigger
     } // end of start
     
     
@@ -258,7 +262,7 @@ void loop()
     // ----- detect laps here
     // Left lane lap count
     if(raceMode){
-      if(analogRead(LDR_L) > 400){
+      if(analogRead(LDR_L) > LDR_TRIGGER_LEVEL){
         if(lapCountL < totalLaps && lapCountL != -3){
           if((millis()-mLastLeftTrigger > LAP_COUNT_TIME_THRESHOLD) && !leftStillCrossingLine){
             lapCountL++;
@@ -295,7 +299,7 @@ void loop()
       else leftStillCrossingLine=0;
         
       // Right lane lap count
-      if(analogRead(LDR_R) > 400){
+      if(analogRead(LDR_R) > LDR_TRIGGER_LEVEL){
         if(lapCountR < totalLaps && lapCountR != -3){
           if((millis()-mLastRightTrigger > LAP_COUNT_TIME_THRESHOLD) && !rightStillCrossingLine){
             lapCountR++;
@@ -450,7 +454,7 @@ void leftResetAtLine(void){
   irsend.sendNEC(LEFT_BACKUP, 32);
   
   // keep going until the laser is clear
-  while(analogRead(LDR_L) > 400){
+  while(analogRead(LDR_L) > LDR_TRIGGER_LEVEL){
     if(checkIfCancel()) return;
   }
 
@@ -460,7 +464,7 @@ void leftResetAtLine(void){
   irsend.sendNEC(LEFT_BUMP_IN, 32);
 
   // the robot should continue to bump until the laser is again tripped
-  while(analogRead(LDR_L) < 400){
+  while(analogRead(LDR_L) < LDR_TRIGGER_LEVEL){
     if(checkIfCancel()) return;
   }
 
@@ -480,7 +484,7 @@ void rightResetAtLine(void){
   irsend.sendNEC(RIGHT_BACKUP, 32);
   
   // keep going until the laser is clear
-  while(analogRead(LDR_R) > 400){
+  while(analogRead(LDR_R) > LDR_TRIGGER_LEVEL){
     if(checkIfCancel()) return;
   }
 
@@ -490,7 +494,7 @@ void rightResetAtLine(void){
   irsend.sendNEC(RIGHT_BUMP_IN, 32);
 
   // the robot should continue to bump until the laser is again tripped
-  while(analogRead(LDR_R) < 400){
+  while(analogRead(LDR_R) < LDR_TRIGGER_LEVEL){
     if(checkIfCancel()) return;
   }
 

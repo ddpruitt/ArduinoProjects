@@ -1,13 +1,12 @@
 // ArduinoJson - arduinojson.org
-// Copyright Benoit Blanchon 2014-2018
+// Copyright Benoit Blanchon 2014-2020
 // MIT License
 
 #pragma once
 
-#include "./DummyWriter.hpp"
+#include <ArduinoJson/Serialization/Writers/DummyWriter.hpp>
 
-namespace ArduinoJson {
-namespace Internals {
+namespace ARDUINOJSON_NAMESPACE {
 
 template <template <typename> class TSerializer, typename TSource>
 size_t measure(const TSource &source) {
@@ -17,5 +16,4 @@ size_t measure(const TSource &source) {
   return serializer.bytesWritten();
 }
 
-}  // namespace Internals
-}  // namespace ArduinoJson
+}  // namespace ARDUINOJSON_NAMESPACE

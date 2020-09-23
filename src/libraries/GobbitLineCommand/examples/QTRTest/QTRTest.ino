@@ -1,4 +1,3 @@
-#define SKETCH_VERSION "10282017a"
 /*
     QTR-8RC line sensor Testing sketch to determine correct wiring
     of sensor with the Gobbit robot chassis.
@@ -67,105 +66,26 @@
 //#define ADAFRUIT_MS
 
 
-//QTRSensors folder must be placed in your arduino libraries folder
-#include <QTRSensors.h>  // Pololu QTR Library 
-
-//line sensor defines
-#define NUM_SENSORS   8     // number of sensors used
-#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
-#define EMITTER_PIN   QTR_NO_EMITTER_PIN  // emitter control pin not used.  If added, replace QTR_NO_EMITTER_PIN with pin#
-
-
-
-// set pin values if a standard motor driver was defined
-#ifdef ADAFRUIT_MS
-// if using adafruit motor shield v2.3 set the pins
-unsigned char sensorPins[8] = {2, 4, 5, 6, 7, 8, 9, 10}; 
-
-#elif defined ARDUMOTO_14
-unsigned char sensorPins[8] = {2, 4, 5, 6, 7, 8, 9, 10}; 
-
-#elif defined ARDUMOTO_20
-unsigned char sensorPins[8] = {5, 6, 7, 8, 9, 10, 12, 13}; 
-
-#else
-unsigned char sensorPins[8] = {2, 4, 5, 6, 7, 8, 9, 10}; // defualt values for Gobbit wiring
-#endif
-
-
-// line sensor declarations
-// sensors 0 through 7 are connected to digital pins 2 through 10, respectively (pin 3 is skipped and used by the Ardumoto controller)
-// 0 is far Right sensor while 7 is far Left sensor
-// On the QTR sensor, the sensors are labeled 1-8.
-// 2,4,5,6,7,8,9,10 are the default pin numbers.  Change them, if needed, to your pin selections.
-
-// line sensor object
-QTRSensorsRC qtrrc;
-//qtrrc.init(sensorPins, NUM_SENSORS, TIME_OUT, EMITTER_PIN);
-
-unsigned int sensorValues[NUM_SENSORS]; // array with individual sensor reading values
-unsigned int line_position = 0; // value from 0-7000 to indicate position of line between sensor 0 - 7
+#include <GobbitLineCommand.h>
+GobbitLineCommand MyBot;
 
 
 void setup()
 {
+  // line sensor pin setup
+  // sensors 1 through 8 are connected to your arduino or motor driver shield
+  // on the QTR sensor, 1 is far Right sensor while 8 is far Left sensor.
+  // The default pin numbers on the arduino or motor driver shield are loaded for whichever motor driver you #define'd.
+  // If needed, uncomment the next line and change the pin numbers to match your wiring.
+  // MyBot.setQTRpins(2, 4, 5, 6, 7, 8, 9, 10);
 
-  // initialize sensor
-  qtrrc.init(sensorPins, NUM_SENSORS, TIMEOUT, EMITTER_PIN);
-  delay(500); // give sensors time to set
-
-  Serial.begin(115200);
-
-  Serial.println("Gobbit Line Command");
-  Serial.println("QTR line sensor Test");
-  Serial.print("Version ");
-  Serial.println(SKETCH_VERSION);
-  Serial.println();
-
-  delay(2500);
-
+  MyBot.beginGobbit();  // initializes robot with settings
 }
 
 
 void loop() // start main loop
 {
 
-  // This will print the sensor numbers. If needed uncomment.
-  //Serial.println("8 7 6 5 4 3 2 1 ");
-
-  // read raw sensor values.
-  qtrrc.read(sensorValues);
-
-  // print indicators if the sensor sees the line
-  for (int i = NUM_SENSORS - 1; i >= 0; i--)
-  {
-    if (sensorValues[i] > 600)
-    {
-      if (sensorValues[i] > 1000)
-      {
-        Serial.print("XX");
-      }
-      else Serial.print("--");
-    }
-    else Serial.print("__");
-  }
-  Serial.println();
-
-  // This will print the raw sensor values. If needed, uncomment.
-  //   for (int i = NUM_SENSORS-1; i >= 0; i--)
-  //  {
-  //    Serial.print(sensorValues[i]);
-  //    Serial.print("  ");
-  //  }
-  //  Serial.println();
-
-  delay(20);
+  MyBot.QTRtest();
 
 }  // end main loop
-
-
-
-
-
-
-

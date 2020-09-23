@@ -96,10 +96,9 @@ void MetOfficeClient::doUpdate(String url) {
   boolean isBody = false;
   char c;
 
-  int size = 0;
   client.setNoDelay(false);
-  while(client.connected()) {
-    while((size = client.available()) > 0) {
+  while (client.connected() || client.available()) {
+    if (client.available()) {
       c = client.read();
       if (c == '{' || c == '[') {
         isBody = true;
@@ -108,7 +107,10 @@ void MetOfficeClient::doUpdate(String url) {
         parser.parse(c);
       }
     }
+    // give WiFi and TCP/IP libraries a chance to handle pending events
+    yield();
   }
+  client.stop();
 }
 
 void MetOfficeClient::whitespace(char c) {
