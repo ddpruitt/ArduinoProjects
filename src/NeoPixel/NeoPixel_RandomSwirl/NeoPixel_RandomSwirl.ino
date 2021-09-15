@@ -31,40 +31,23 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, PIN, NEO_GRB + NEO_KHZ800);
 // pixel power leads, add 300 - 500 Ohm resistor on first pixel's data input
 // and minimize distance between Arduino and first pixel.  Avoid connecting
 // on a live circuit...if you must, connect GND first.
-
-
-    int LetterA[LEDS] = {2,3,9,10,16,18,25,26,27,7};
-    int LetterB[LEDS] = {8,1,3,2,10,12,16,18,20,24,25,26,27,7,28}; 
-    int LetterC[LEDS] = {0,1,2,3,4,5,6,7,
-                         15,23,
-                         31,30,29,28,27,26,25,24,
-                         16,8,
-                         9,10,11,12,13,14,
-                         22,21,20,19,18,17
-                         }; 
-
-    int LetterC4[LEDS] = {                    
-                         17,18,19,20,21,22,
-                         14,13,12,11,10,9,
-                         8,16,
-                         24,25,26,27,28,29,30,31,
-                         23,15,
-                         7,6,5,4,3,2,1,0
-                         }; 
-
-    
-//    int LetterA[LEDS] = {2,3,9,10,16,18,25,26,27,7};
+int LetterC[LEDS] = {0,1,2,3,4,5,6,7,
+                     8,9,10,11,12,13,14,15,
+                     16,17,18,19,20,21,22,23,
+                     24,25,26,27,28,29,30,31
+                    };
+                     //15,23,
+                     //31,30,29,28,27,26,25,24,
+                     //16,8,
+                     //9,10,11,12,13,14,
+                     //22,21,20,19,18,17
+                     //}; 
 void setup() {
-
-
-
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 }
 
 void loop() {
-
-  
   // Some example procedures showing how to display to the pixels: 
   //random numbers from 1 to 255
   randNumber = random(RANDLOW, RANDHIGH);
@@ -77,20 +60,19 @@ void loop() {
 }
 
 // Fills a colums of dots one after the other with a one single color then another color.
-
-
 void colorClear(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<LEDS; i++) {
-  strip.setPixelColor(LetterC[i], 0, 0, 0);
-  strip.show();
-  delay(10);
-    }}
+    strip.setPixelColor(LetterC[i], 0, 0, 0);
+    strip.show();
+    delay(10);
+  }
+}
 
 void letterscolorWipe(uint32_t c, uint8_t wait) {
-strip.begin();
-    for(uint16_t i=0; i<=(LEDS-1); i++) {
-      strip.setPixelColor(random(RANDLOW, LEDS), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH));// not part of the code jsut for test
-      strip.show();
-      delay(15);
-      }
+  strip.begin();
+  for(uint16_t i=0; i<=(LEDS-1); i++) {
+    strip.setPixelColor(random(RANDLOW, LEDS), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH));// not part of the code jsut for test
+    strip.show();
+    delay(15);
+    }
 }

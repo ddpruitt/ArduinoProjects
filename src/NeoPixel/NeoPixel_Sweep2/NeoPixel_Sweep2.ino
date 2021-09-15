@@ -32,6 +32,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, PIN, NEO_GRB + NEO_KHZ800);
 // on a live circuit...if you must, connect GND first.
 
 void setup() {
+  //Serial.begin(57600)
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 }
@@ -42,17 +43,27 @@ void loop() {
   randNumber = random(RANDLOW, RANDHIGH);
   randNumber2 = random(RANDLOW, RANDHIGH);
   randNumber3 = random(RANDLOW, RANDHIGH);
-  colorWipe(strip.Color(randNumber, randNumber2, randNumber3), SPEED); // random color
+  colorWipeColumn(strip.Color(randNumber, randNumber2, randNumber3), SPEED);
 
-
-
+  colorWipeRow(strip.Color(randNumber3, randNumber2, randNumber), SPEED);
 }
 
 // Fills a colums of dots one after the other with a one single color then another color.
-void colorWipe(uint32_t c, uint8_t wait) {
+void colorWipeColumn(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<COLUMS; i++) {
-    for (uint16_t r=(-ROWS); r> (ROWS); r--){
-      strip.setPixelColor(i+(COLUMS*(ROWS-r)),c);
+    for (uint16_t r=0; r<ROWS; r++){
+      strip.setPixelColor((r*COLUMS + i),c);
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+// Fills a colums of dots one after the other with a one single color then another color.
+void colorWipeRow(uint32_t c, uint8_t wait) {
+  for(uint16_t r=0; r < ROWS; r++) {
+    for (uint16_t y=0; y < COLUMS; y++){
+      strip.setPixelColor((r*COLUMS + y),c);
     }
     strip.show();
     delay(wait);
