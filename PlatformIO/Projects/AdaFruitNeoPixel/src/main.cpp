@@ -46,9 +46,11 @@ void loop()
   randNumber2 = random(RANDLOW, RANDHIGH);
   randNumber3 = random(RANDLOW, RANDHIGH);
 
-  colorWipe(strip.Color(0,0,randNumber), SPEED);
   colorWipeRow(strip.Color(randNumber3, 0, 0), SPEED);
   colorWipeColumn(strip.Color(0, randNumber2, 0), SPEED);
+  colorWipe(strip.Color(0,0,randNumber), SPEED);
+  colorWipe(strip.Color(0,randNumber2,randNumber), SPEED);
+  colorWipe(strip.Color(randNumber3,0,randNumber), SPEED);
 }
 
 // Fills a colums of dots one after the other with a one single color then another color.
