@@ -1,5 +1,9 @@
 #include <Arduino.h>
 #include <U8glib.h>
+#include <dht.h>
+
+dht DHT;
+#define DHT11_PIN 12
 
 // setup u8g object, please remove comment from one of the following constructor calls
 // IMPORTANT NOTE: The complete list of supported devices is here: http://code.google.com/p/u8glib/wiki/device
@@ -83,6 +87,8 @@ uint8_t menu_current = 0;
 uint8_t menu_redraw_required = 0;
 uint8_t last_key_code = KEY_NONE;
 
+int val = 0;
+
 void drawMenu(void)
 {
   uint8_t i, h;
@@ -130,14 +136,48 @@ void updateMenu(void)
 
 void setup()
 {
-
   u8g.setRot180();          // rotate screen, if required
   menu_redraw_required = 1; // force initial redraw
-  //Serial.begin(9600);
+
+  Serial.begin(115200);
 }
 
 void loop()
 {
+
+// READ DATA
+  Serial.print("DHT11, \t");
+  int chk = DHT.read11(DHT11_PIN);
+  switch (chk)
+  {
+    case DHTLIB_OK:
+		Serial.print("OK,\t");
+		break;
+    case DHTLIB_ERROR_CHECKSUM:
+		Serial.print("Checksum error,\t");
+		break;
+    case DHTLIB_ERROR_TIMEOUT:
+		Serial.print("Time out error,\t");
+		break;
+    case DHTLIB_ERROR_CONNECT:
+        Serial.print("Connect error,\t");
+        break;
+    case DHTLIB_ERROR_ACK_L:
+        Serial.print("Ack Low error,\t");
+        break;
+    case DHTLIB_ERROR_ACK_H:
+        Serial.print("Ack High error,\t");
+        break;
+    default:
+		Serial.print("Unknown error,\t");
+		break;
+  }
+  // DISPLAY DATA
+  Serial.print(DHT.humidity, 1);
+  Serial.print(",\t");
+  Serial.println(DHT.temperature, 1);
+
+  delay(2000);
 
   uiStep();     // check for key press
   updateMenu(); // update menu bar
