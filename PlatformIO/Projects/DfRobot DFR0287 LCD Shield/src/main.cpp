@@ -25,36 +25,36 @@ void readDhtSensors(void)
 {
 
   // READ DATA
-  u8g.print("DHT11, ");
+  u8g
+  u8g.println("DHT11, ");
 
   int chk = DHT.read11(DHT11_PIN);
   switch (chk)
   {
   case DHTLIB_OK:
-    u8g.print("OK, ");
+    u8g.println("OK, ");
     break;
   case DHTLIB_ERROR_CHECKSUM:
-    u8g.print("Checksum error, ");
+    u8g.println("Checksum error, ");
     break;
   case DHTLIB_ERROR_TIMEOUT:
-    u8g.print("Time out error, ");
+    u8g.println("Time out error, ");
     break;
   case DHTLIB_ERROR_CONNECT:
-    u8g.print("Connect error, ");
+    u8g.println("Connect error, ");
     break;
   case DHTLIB_ERROR_ACK_L:
-    u8g.print("Ack Low error, ");
+    u8g.println("Ack Low error, ");
     break;
   case DHTLIB_ERROR_ACK_H:
-    u8g.print("Ack High error, ");
+    u8g.println("Ack High error, ");
     break;
   default:
-    u8g.print("Unknown error, ");
+    u8g.println("Unknown error, ");
     break;
   }
   // DISPLAY DATA
-  u8g.print(DHT.humidity, 1);
-  u8g.print(", ");
+  u8g.println(DHT.humidity, 1);
   u8g.println(DHT.temperature, 1);
 
   delay(500);
