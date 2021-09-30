@@ -7,19 +7,20 @@
 #define PIN 6     // Pin for data
 #define LEDS 32   // How many LEDs?
 #define ROWS 4    // count LEDs downward
-#define COLUMS 8  //Count your LEDS to the right
+#define COLUMNS 8 //Count your LEDS to the right
 #define SPEED 100 //faster the lower the number
 
 #define RANDLOW 0  //low value for random numbers
-#define RANDHIGH 5 //High value for random numbers
+#define RANDHIGH 4 //High value for random numbers
 
-void colorWipe(uint32_t c, uint8_t wait);
-void colorWipeRow(uint32_t c, uint8_t wait);
-void colorWipeColumn(uint32_t c, uint8_t wait);
+void setAllColors(uint32_t c, uint8_t wait);
+void setRowColor(uint32_t c, uint16_t row, uint8_t wait);
+void setColumnColor(uint32_t c, uint16_t column, uint8_t wait);
 
-long randNumber;
-long randNumber2;
-long randNumber3;
+void colorWipeByIndex(uint32_t c, uint8_t wait);
+void colorWipeByIndex(uint32_t c1, uint32_t c2, uint8_t wait);
+void colorWipeByRow(uint32_t c, uint8_t wait);
+void colorWipeByColumn(uint32_t c, uint8_t wait);
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -41,52 +42,150 @@ void setup()
 void loop()
 {
   // Some example procedures showing how to display to the pixels:
-  //random numbers from 1 to 255
-  randNumber = random(RANDLOW, RANDHIGH);
-  randNumber2 = random(RANDLOW, RANDHIGH);
-  randNumber3 = random(RANDLOW, RANDHIGH);
-
-  colorWipeRow(strip.Color(randNumber3, 0, 0), SPEED);
-  colorWipeColumn(strip.Color(0, randNumber2, 0), SPEED);
-  colorWipe(strip.Color(0,0,randNumber), SPEED);
-  colorWipe(strip.Color(0,randNumber2,randNumber), SPEED);
-  colorWipe(strip.Color(randNumber3,0,randNumber), SPEED);
-}
-
-// Fills a colums of dots one after the other with a one single color then another color.
-void colorWipeColumn(uint32_t c, uint8_t wait)
-{
-  for (uint16_t i = 0; i < COLUMS; i++)
+  //random numbers from RANDLOW to RANDHIGH
+  uint32_t colors[LEDS];
+  for (uint16_t i = 0; i < LEDS; i++)
   {
-    for (uint16_t r = 0; r < ROWS; r++)
-    {
-      strip.setPixelColor((r * COLUMS + i), c);
-    }
-    strip.show();
-    delay(wait);
+    colors[i] = strip.Color(random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH));
   }
-}
 
-// Fills a colums of dots one after the other with a one single color then another color.
-void colorWipeRow(uint32_t c, uint8_t wait)
-{
-  for (uint16_t r = 0; r < ROWS; r++)
+  uint32_t c0;
+  c0 = strip.Color(0, 0, 0);
+
+  for (uint16_t i = 0; i < LEDS; i++)
   {
-    for (uint16_t y = 0; y < COLUMS; y++)
-    {
-      strip.setPixelColor((r * COLUMS + y), c);
-    }
-    strip.show();
-    delay(wait);
+    setAllColors(colors[i], SPEED);
   }
+
+  setAllColors(c0, SPEED);
+
+  for (uint16_t i = 0; i < LEDS; i += 2)
+  {
+    colorWipeByRow(colors[i], SPEED);
+    colorWipeByColumn(colors[i + 1], SPEED);
+  }
+
+  // colorWipe(colors[2], SPEED);
+  // colorWipe(colors[3], SPEED);
+  // colorWipe(colors[4], SPEED);
+
+  // colorWipe(c1, c2, SPEED);
+  // colorWipeColumn(c0, SPEED);
+  // colorWipe(c3, c1, SPEED);
+  // colorWipeColumn(c0, SPEED);
+  // colorWipe(c2, c3, SPEED);
+  // colorWipeColumn(c0, SPEED);
+
+  // setRowColor(c1, 0, SPEED);
+  // setRowColor(c1, 1, SPEED);
+  // setRowColor(c1, 2, SPEED);
+  // setRowColor(c1, 3, SPEED);
+
+  // setRowColor(c2, 0, SPEED);
+  // setRowColor(c0, 3, SPEED);
+
+  // setRowColor(c2, 1, SPEED);
+  // setRowColor(c0, 0, SPEED);
+
+  // setRowColor(c2, 2, SPEED);
+  // setRowColor(c0, 1, SPEED);
+
+  // setRowColor(c2, 3, SPEED);
+  // setRowColor(c0, 2, SPEED);
+
+  // setColumnColor(c3, 0, SPEED);
+  // setColumnColor(c0, 7, SPEED);
+
+  // setColumnColor(c3, 1, SPEED);
+  // setColumnColor(c0, 0, SPEED);
+
+  // setColumnColor(c3, 2, SPEED);
+  // setColumnColor(c0, 1, SPEED);
+
+  // setColumnColor(c3, 3, SPEED);
+  // setColumnColor(c0, 2, SPEED);
+
+  // setColumnColor(c3, 4, SPEED);
+  // setColumnColor(c0, 3, SPEED);
+
+  // setColumnColor(c3, 5, SPEED);
+  // setColumnColor(c0, 4, SPEED);
+
+  // setColumnColor(c3, 6, SPEED);
+  // setColumnColor(c0, 5, SPEED);
+
+  // setColumnColor(c3, 7, SPEED);
+  // setColumnColor(c0, 6, SPEED);
 }
 
-// Fills a colums of dots one after the other with a one single color then another color.
-void colorWipe(uint32_t c, uint8_t wait)
+void setAllColors(uint32_t c, uint8_t wait)
 {
   for (uint16_t i = 0; i < LEDS; i++)
   {
     strip.setPixelColor(i, c);
+  }
+  strip.show();
+  delay(wait);
+}
+
+void setRowColor(uint32_t c, uint16_t row, uint8_t wait)
+{
+  if (row < 0 || row >= ROWS)
+    return;
+
+  for (uint16_t i = 0; i < COLUMNS; i++)
+  {
+    strip.setPixelColor(row * COLUMNS + i, c);
+  }
+  strip.show();
+  delay(wait);
+}
+
+void setColumnColor(uint32_t c, uint16_t column, uint8_t wait)
+{
+  if (column < 0 || column >= COLUMNS)
+    return;
+
+  for (uint16_t i = 0; i < ROWS; i++)
+  {
+    strip.setPixelColor(i * COLUMNS + column, c);
+  }
+  strip.show();
+  delay(wait);
+}
+
+void colorWipeByColumn(uint32_t c, uint8_t wait)
+{
+  for (uint16_t i = 0; i < COLUMNS; i++)
+  {
+    setColumnColor(c, i, wait);
+  }
+}
+
+void colorWipeByRow(uint32_t c, uint8_t wait)
+{
+  for (uint16_t r = 0; r < ROWS; r++)
+  {
+    setRowColor(c, r, wait);
+  }
+}
+
+void colorWipeByIndex(uint32_t c, uint8_t wait)
+{
+  for (uint16_t i = 0; i < LEDS; i++)
+  {
+    strip.setPixelColor(i, c);
+    strip.show();
+    delay(wait);
+  }
+}
+
+void colorWipeByIndex(uint32_t c1, uint32_t c2, uint8_t wait)
+{
+  for (uint16_t i = 0; i < LEDS; i++)
+  {
+    strip.setPixelColor(i, c1);
+    strip.setPixelColor(LEDS - 1 - i, c2);
     strip.show();
     delay(wait);
   }
