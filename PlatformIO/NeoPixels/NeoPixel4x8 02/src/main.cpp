@@ -20,7 +20,7 @@
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
-uint16_t neoPIxelIndex[4][8] =
+uint16_t neoPixelIndex[ROWS][COLUMNS] =
     {
         {0, 1, 2, 3, 4, 5, 6, 7},
         {8, 9, 10, 11, 12, 13, 14, 15},
@@ -29,6 +29,16 @@ uint16_t neoPIxelIndex[4][8] =
     };
 
 #include <Arduino.h>
+
+uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t offsetRow, uint16_t offsetColumn)
+{
+  return COLUMNS * ((row + offsetRow) % ROWS) + (column + offsetColumn) % COLUMNS;
+}
+
+uint16_t getNeoPixel(uint16_t row, uint16_t column)
+{
+  return getNeoPixel(row, column, 0, 0);
+}
 
 void setup()
 {
@@ -40,10 +50,23 @@ void setup()
 
 void loop()
 {
-  uint32_t c0 = strip.Color(4, 0, 0);
+  uint32_t c0 = strip.Color(0, 0, 0);
+  uint32_t c1 = strip.Color(4, 0, 0);
+  uint32_t c2 = strip.Color(0, 4, 0);
 
-  strip.setPixelColor(neoPIxelIndex[1][3], c0);
+  // strip.setPixelColor(neoPixelIndex[1][3], c1);
+  // strip.show();
+  // delay(SPEED);
+
+  // strip.setPixelColor(neoPixelIndex[1][3], c0);
+  // strip.show();
+  // delay(SPEED);
+
+  strip.setPixelColor(getNeoPixel(3,5), c2);
   strip.show();
   delay(SPEED);
 
+  strip.setPixelColor(getNeoPixel(3,5), c0);
+  strip.show();
+  delay(SPEED);
 }
