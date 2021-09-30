@@ -10,7 +10,7 @@
 #define COLUMNS 8 //Count your LEDS to the right
 #define SPEED 100 //faster the lower the number
 
-#define RANDLOW 0  //low value for random numbers
+#define RANDLOW 1  //low value for random numbers
 #define RANDHIGH 4 //High value for random numbers
 
 void setAllColors(uint32_t c, uint8_t wait);
@@ -41,81 +41,79 @@ void setup()
 
 void loop()
 {
-  // Some example procedures showing how to display to the pixels:
-  //random numbers from RANDLOW to RANDHIGH
+  // c0 turns off the LED
+  uint32_t c0 = strip.Color(0, 0, 0);
+
+  // an array equal to the number of LEDS with all random colors.
   uint32_t colors[LEDS];
   for (uint16_t i = 0; i < LEDS; i++)
   {
     colors[i] = strip.Color(random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH), random(RANDLOW, RANDHIGH));
   }
 
-  uint32_t c0;
-  c0 = strip.Color(0, 0, 0);
-
+  // set each pixel directly and wait.
   for (uint16_t i = 0; i < LEDS; i++)
   {
-    setAllColors(colors[i], SPEED);
+    strip.setPixelColor(i, colors[i]);
+    strip.show();
+    delay(SPEED);
   }
 
+  // clear the screen
   setAllColors(c0, SPEED);
 
+  // set all the rows to a color then the columns
   for (uint16_t i = 0; i < LEDS; i += 2)
   {
     colorWipeByRow(colors[i], SPEED);
+    setAllColors(c0, SPEED);
+
     colorWipeByColumn(colors[i + 1], SPEED);
+    setAllColors(c0, SPEED);
   }
 
-  // colorWipe(colors[2], SPEED);
-  // colorWipe(colors[3], SPEED);
-  // colorWipe(colors[4], SPEED);
+  // clear the screen
+  setAllColors(c0, SPEED);
 
-  // colorWipe(c1, c2, SPEED);
-  // colorWipeColumn(c0, SPEED);
-  // colorWipe(c3, c1, SPEED);
-  // colorWipeColumn(c0, SPEED);
-  // colorWipe(c2, c3, SPEED);
-  // colorWipeColumn(c0, SPEED);
+  for (uint16_t cidx = 0; cidx < LEDS; cidx+=2)
+  {
+    for (uint16_t i = 0; i < ROWS; i++)
+    {
+      setRowColor(colors[cidx], i, SPEED);
+      setRowColor(c0, (i - 1) % ROWS, SPEED);
+    }
+    setAllColors(c0, SPEED);
 
-  // setRowColor(c1, 0, SPEED);
-  // setRowColor(c1, 1, SPEED);
-  // setRowColor(c1, 2, SPEED);
-  // setRowColor(c1, 3, SPEED);
+    for (uint16_t i = 0; i < COLUMNS; i++)
+    {
+      setColumnColor(colors[cidx+1], i, SPEED);
+      setColumnColor(c0, (i - 1) % COLUMNS, SPEED);
+    }
+    setAllColors(c0, SPEED);
+  }
 
-  // setRowColor(c2, 0, SPEED);
-  // setRowColor(c0, 3, SPEED);
+  // clear the screen
+  setAllColors(c0, SPEED);
 
-  // setRowColor(c2, 1, SPEED);
-  // setRowColor(c0, 0, SPEED);
+  // set all the LED's one at a time.
+  colorWipeByIndex(strip.Color(2, 0, 0), SPEED);
+  colorWipeByIndex(strip.Color(0, 2, 0), SPEED);
+  colorWipeByIndex(strip.Color(0, 0, 2), SPEED);
 
-  // setRowColor(c2, 2, SPEED);
-  // setRowColor(c0, 1, SPEED);
+  // set all the LED's one at a time from both ends
+  colorWipeByIndex(strip.Color(2, 0, 0), strip.Color(1, 0, 1), SPEED);
+  // clear the screen
+  setAllColors(c0, SPEED);
 
-  // setRowColor(c2, 3, SPEED);
-  // setRowColor(c0, 2, SPEED);
+  colorWipeByIndex(strip.Color(0, 2, 0), strip.Color(1, 0, 1), SPEED);
+  // clear the screen
+  setAllColors(c0, SPEED);
 
-  // setColumnColor(c3, 0, SPEED);
-  // setColumnColor(c0, 7, SPEED);
+  colorWipeByIndex(strip.Color(0, 0, 2), strip.Color(1, 0, 1), SPEED);
 
-  // setColumnColor(c3, 1, SPEED);
-  // setColumnColor(c0, 0, SPEED);
+  // clear the screen
+  setAllColors(c0, SPEED);
 
-  // setColumnColor(c3, 2, SPEED);
-  // setColumnColor(c0, 1, SPEED);
-
-  // setColumnColor(c3, 3, SPEED);
-  // setColumnColor(c0, 2, SPEED);
-
-  // setColumnColor(c3, 4, SPEED);
-  // setColumnColor(c0, 3, SPEED);
-
-  // setColumnColor(c3, 5, SPEED);
-  // setColumnColor(c0, 4, SPEED);
-
-  // setColumnColor(c3, 6, SPEED);
-  // setColumnColor(c0, 5, SPEED);
-
-  // setColumnColor(c3, 7, SPEED);
-  // setColumnColor(c0, 6, SPEED);
 }
 
 void setAllColors(uint32_t c, uint8_t wait)
