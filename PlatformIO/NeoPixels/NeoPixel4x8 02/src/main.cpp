@@ -26,7 +26,7 @@ uint32_t cGreen = strip.Color(0, 4, 0);
 uint32_t cBlue = strip.Color(0, 0, 4);
 uint32_t cWhite = strip.Color(1, 1, 1);
 
-uint32_t colors[4] = { c000, cGreen, cBlue, cRed };
+uint32_t cRGBW[5] = { c000, cRed, cGreen, cBlue, cWhite };
 
 uint32_t redColors[2] = { c000, cRed };
 uint32_t blueColors[2] = { c000, cBlue };
@@ -46,26 +46,34 @@ uint16_t pattern00[ROWS][COLUMNS] =
 
 uint16_t pattern01[ROWS][COLUMNS] =
     {
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 1, 2, 0, 0, 0},
-        {0, 0, 0, 3, 4, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
     };
 
 uint16_t pattern02[ROWS][COLUMNS] =
     {
-        {0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
 
 uint16_t pattern03[ROWS][COLUMNS] =
     {
-        {0, 0, 0, 1, 0, 0, 0, 0},
         {1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0, 0}
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0}
+    };
+
+uint16_t pattern03a[ROWS][COLUMNS] =
+    {
+        {1, 2, 2, 2, 2, 2, 2, 2},
+        {1, 3, 3, 3, 3, 3, 3, 3},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0}
     };
 
 uint16_t pattern04[ROWS][COLUMNS] =
@@ -82,6 +90,14 @@ uint16_t pattern05[ROWS][COLUMNS] =
         {1, 1, 1, 1, 1, 1, 1, 1},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {1, 1, 1, 1, 1, 1, 1, 1}
+    };
+
+uint16_t pattern06[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 0, 4, 3, 2, 1},
+        {0, 0, 0, 4, 3, 2, 1, 0},
+        {0, 0, 4, 3, 2, 1, 0, 0},
+        {0, 4, 3, 2, 1, 0, 0, 0}
     };
 
 
@@ -147,15 +163,34 @@ void setup()
 void loop()
 {
 
-  // setPixelColorPattern(pattern01, colors, 4, SPEED);
-  // setPixelColorPattern(pattern02, colors, 4, SPEED);
+  for (size_t i = 0; i < COLUMNS; i++)
+  {
+    setPixelColorPattern(pattern01, 0, i, greenColors, 2, SPEED);
+  }
 
-  // setPixelColorPattern(pattern03, blueColors, 2, SPEED);
-  // setPixelColorPattern(pattern04, redColors, 2, SPEED);
-  // setPixelColorPattern(pattern05, greenColors, 2, SPEED);
+  for (size_t i = 0; i < ROWS; i++)
+  {
+    setPixelColorPattern(pattern02, i, 0, blueColors, 2, SPEED);
+  }
 
-  // setPixelColorPattern(pattern05, redBlueColors, 2, SPEED);
-  // setPixelColorPattern(pattern05, blueRedColors, 2, SPEED);
+  for (size_t i = 0; i < COLUMNS; i++)
+  {
+    for (size_t j = 0; j < ROWS; j++)
+    {
+      setPixelColorPattern(pattern03a, j, i, cRGBW, 5, SPEED);
+    }
+  }
+
+  for (size_t i = 0; i < COLUMNS; i++)
+  {
+    setPixelColorPattern(pattern06, 0, -i, cRGBW, 5, SPEED);
+  }
+
+  setPixelColorPattern(pattern02, cRGBW, 5, SPEED);
+
+  setPixelColorPattern(pattern03, blueColors, 2, SPEED);
+  setPixelColorPattern(pattern04, redColors, 2, SPEED);
+  setPixelColorPattern(pattern05, greenColors, 2, SPEED);
 
   setPixelColorPattern(pattern05, 0, 0, redBlueColors, 2, SPEED);
   setPixelColorPattern(pattern05, 1, 0, redBlueColors, 2, SPEED);
