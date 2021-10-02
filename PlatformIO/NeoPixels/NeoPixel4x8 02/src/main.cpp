@@ -102,7 +102,7 @@ void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c)
   delay(SPEED);
 }
 
-void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors)
+void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors, uint16_t wait)
 {
   for (uint16_t row = 0; row < ROWS; row++)
   {
@@ -118,7 +118,7 @@ void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], si
 
   }
   strip.show();
-  delay(SPEED);
+  delay(wait);
 }
 
 void setup()
@@ -152,21 +152,15 @@ void loop()
 
   uint32_t redBlueColors[2] = { strip.Color(0,0,4), strip.Color(4,0,0) };
   uint32_t blueRedColors[2] = { strip.Color(4,0,0), strip.Color(0,0,4) };
-  //setPixelColorPattern(pattern01, colors, 4);
-  //delay(SPEED);
-  //setPixelColorPattern(pattern02, colors, 4);
-  //delay(SPEED);
 
-  // setPixelColorPattern(pattern05, blueColors, 2);
-  // delay(SPEED);
-  // setPixelColorPattern(pattern05, redColors, 2);
-  // delay(SPEED);
-  // setPixelColorPattern(pattern05, greenColors, 2);
-  // delay(SPEED);
+  setPixelColorPattern(pattern01, colors, 4, SPEED);
+  setPixelColorPattern(pattern02, colors, 4, SPEED);
 
-  setPixelColorPattern(pattern05, redBlueColors, 2);
-  delay(SPEED);
-  setPixelColorPattern(pattern05, blueRedColors, 2);
-  delay(SPEED);
+  setPixelColorPattern(pattern03, blueColors, 2, SPEED);
+  setPixelColorPattern(pattern04, redColors, 2, SPEED);
+  setPixelColorPattern(pattern05, greenColors, 2, SPEED);
+
+  setPixelColorPattern(pattern05, redBlueColors, 2, SPEED);
+  setPixelColorPattern(pattern05, blueRedColors, 2, SPEED);
 
 }
