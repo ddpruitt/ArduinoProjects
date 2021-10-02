@@ -30,6 +30,14 @@ uint16_t neoPixelIndex[ROWS][COLUMNS] =
         {24, 25, 26, 27, 28, 29, 30, 31}
     };
 
+uint16_t pattern00[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
 uint16_t pattern01[ROWS][COLUMNS] =
     {
         {0, 0, 0, 0, 0, 0, 0, 0},
@@ -52,6 +60,14 @@ uint16_t pattern03[ROWS][COLUMNS] =
         {1, 1, 1, 1, 1, 1, 1, 1},
         {0, 0, 0, 1, 0, 0, 0, 0},
         {0, 0, 0, 1, 0, 0, 0, 0}
+    };
+
+uint16_t pattern04[ROWS][COLUMNS] =
+    {
+        {1, 0, 0, 1, 1, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 1, 1, 0, 0, 1}
     };
 
 uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t offsetRow, uint16_t offsetColumn)
@@ -136,6 +152,8 @@ void loop()
   setPixelColorPattern(pattern02, blueColors, 2);
   delay(SPEED);
   setPixelColorPattern(pattern03, redColors, 2);
+  delay(SPEED);
+  setPixelColorPattern(pattern04, greenColors, 2);
   delay(SPEED);
 
 }
