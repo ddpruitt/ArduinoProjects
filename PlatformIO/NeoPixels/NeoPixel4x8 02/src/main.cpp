@@ -20,6 +20,8 @@
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
+uint32_t c000 = strip.Color(0, 0, 0); // Off basically
+
 uint16_t neoPixelIndex[ROWS][COLUMNS] =
     {
         {0, 1, 2, 3, 4, 5, 6, 7},
@@ -28,7 +30,29 @@ uint16_t neoPixelIndex[ROWS][COLUMNS] =
         {24, 25, 26, 27, 28, 29, 30, 31}
     };
 
-#include <Arduino.h>
+uint16_t pattern01[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 2, 0, 0, 0},
+        {0, 0, 0, 3, 4, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+uint16_t pattern02[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 1, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
+uint16_t pattern03[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 1, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0, 0}
+    };
 
 uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t offsetRow, uint16_t offsetColumn)
 {
@@ -40,9 +64,44 @@ uint16_t getNeoPixel(uint16_t row, uint16_t column)
   return getNeoPixel(row, column, 0, 0);
 }
 
+void setNeoPixelMatrix(uint16_t row, uint16_t column, uint32_t c)
+{
+  strip.setPixelColor(neoPixelIndex[row][column], c);
+  strip.show();
+  delay(SPEED);
+}
+
+void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c)
+{
+  strip.setPixelColor(getNeoPixel(row,column), c);
+  strip.show();
+  delay(SPEED);
+}
+
+void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors)
+{
+
+  for (uint16_t row = 0; row < ROWS; row++)
+  {
+    for (uint16_t col = 0; col < COLUMNS; col++)
+    {
+      //strip.setPixelColor(getNeoPixel(row, col), colors[pattern[row][col]]);
+      if(lenOfColors <= pattern[row][col]  || 0 > pattern[row][col])
+      {
+        strip.setPixelColor(getNeoPixel(row, col), strip.Color(0, 0, 0));
+        continue;
+      }
+      strip.setPixelColor(getNeoPixel(row, col), colors[pattern[row][col]]);
+    }
+
+  }
+  strip.show();
+  delay(SPEED);
+}
+
 void setup()
 {
-  //Serial.begin(57600);
+  Serial.begin(57600);
 
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -50,23 +109,33 @@ void setup()
 
 void loop()
 {
-  uint32_t c0 = strip.Color(0, 0, 0);
-  uint32_t c1 = strip.Color(4, 0, 0);
-  uint32_t c2 = strip.Color(0, 4, 0);
+  // uint32_t c1 = strip.Color(4, 0, 0);
+  // uint32_t c2 = strip.Color(0, 4, 0);
 
-  // strip.setPixelColor(neoPixelIndex[1][3], c1);
-  // strip.show();
-  // delay(SPEED);
+  // setNeoPixelMatrix(1,3,c1);
+  // setNeoPixelMatrix(3,5,c2);
 
-  // strip.setPixelColor(neoPixelIndex[1][3], c0);
-  // strip.show();
-  // delay(SPEED);
+  // setNeoPixelColor(3,5,c2);
+  // setNeoPixelColor(3,5,c000);
 
-  strip.setPixelColor(getNeoPixel(3,5), c2);
-  strip.show();
+  uint32_t colors[4];
+  colors[0] = strip.Color(0,0,0);
+  colors[1] = strip.Color(0,4,0);
+  colors[2] = strip.Color(0,0,4);
+  colors[3] = strip.Color(4,0,0);
+
+  uint32_t redColors[2] = { strip.Color(0,0,0), strip.Color(4,0,0) };
+  uint32_t blueColors[2] = { strip.Color(0,0,0), strip.Color(0,0,4) };
+  uint32_t greenColors[2] = { strip.Color(0,0,0), strip.Color(0,4,0) };
+
+  //setPixelColorPattern(pattern01, colors, 4);
+  //delay(SPEED);
+  //setPixelColorPattern(pattern02, colors, 4);
+  //delay(SPEED);
+
+  setPixelColorPattern(pattern02, blueColors, 2);
+  delay(SPEED);
+  setPixelColorPattern(pattern03, redColors, 2);
   delay(SPEED);
 
-  strip.setPixelColor(getNeoPixel(3,5), c0);
-  strip.show();
-  delay(SPEED);
 }
