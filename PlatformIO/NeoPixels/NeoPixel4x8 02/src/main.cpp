@@ -21,14 +21,20 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
 uint32_t c000 = strip.Color(0, 0, 0); // Off basically
+uint32_t cRed = strip.Color(4, 0, 0);
+uint32_t cGreen = strip.Color(0, 4, 0);
+uint32_t cBlue = strip.Color(0, 0, 4);
+uint32_t cWhite = strip.Color(1, 1, 1);
 
-uint16_t neoPixelIndex[ROWS][COLUMNS] =
-    {
-        {0, 1, 2, 3, 4, 5, 6, 7},
-        {8, 9, 10, 11, 12, 13, 14, 15},
-        {16, 17, 18, 19, 20, 21, 22, 23},
-        {24, 25, 26, 27, 28, 29, 30, 31}
-    };
+uint32_t colors[4] = { c000, cGreen, cBlue, cRed };
+
+uint32_t redColors[2] = { c000, cRed };
+uint32_t blueColors[2] = { c000, cBlue };
+uint32_t greenColors[2] = { c000, cGreen };
+uint32_t whiteColors[2] = { c000, cWhite };
+
+uint32_t redBlueColors[2] = { cBlue, cRed };
+uint32_t blueRedColors[2] = { cRed, cBlue };
 
 uint16_t pattern00[ROWS][COLUMNS] =
     {
@@ -78,9 +84,22 @@ uint16_t pattern05[ROWS][COLUMNS] =
         {1, 1, 1, 1, 1, 1, 1, 1}
     };
 
-uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t offsetRow, uint16_t offsetColumn)
+
+// The NeoPixel in this case is in a 4x8 matrix pattern.  To address individual
+// neopixels you have to know its index.  The matrix to neopixel index looks like this:
+//
+// uint16_t neoPixelIndex[ROWS][COLUMNS] =
+//   {
+//       {0, 1, 2, 3, 4, 5, 6, 7},
+//       {8, 9, 10, 11, 12, 13, 14, 15},
+//       {16, 17, 18, 19, 20, 21, 22, 23},
+//       {24, 25, 26, 27, 28, 29, 30, 31}
+//   };
+//
+// The offset is if you want to shift a row or column, this would allow the patterns to be shifted.
+uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t shiftRow, uint16_t shiftColumn)
 {
-  return COLUMNS * ((row + offsetRow) % ROWS) + (column + offsetColumn) % COLUMNS;
+  return COLUMNS * ((row + shiftRow) % ROWS) + (column + shiftColumn) % COLUMNS;
 }
 
 uint16_t getNeoPixel(uint16_t row, uint16_t column)
@@ -88,21 +107,14 @@ uint16_t getNeoPixel(uint16_t row, uint16_t column)
   return getNeoPixel(row, column, 0, 0);
 }
 
-void setNeoPixelMatrix(uint16_t row, uint16_t column, uint32_t c)
-{
-  strip.setPixelColor(neoPixelIndex[row][column], c);
-  strip.show();
-  delay(SPEED);
-}
-
-void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c)
+void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c, uint16_t wait)
 {
   strip.setPixelColor(getNeoPixel(row,column), c);
   strip.show();
-  delay(SPEED);
+  delay(wait);
 }
 
-void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors, uint16_t wait)
+void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint16_t shiftRow, uint16_t shiftColumn, uint32_t colors[], size_t lenOfColors, uint16_t wait)
 {
   for (uint16_t row = 0; row < ROWS; row++)
   {
@@ -110,10 +122,10 @@ void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], si
     {
       if(lenOfColors <= pattern[row][col]  || 0 > pattern[row][col])
       {
-        strip.setPixelColor(getNeoPixel(row, col), strip.Color(0, 0, 0));
+        strip.setPixelColor(getNeoPixel(row, col, shiftRow, shiftColumn), strip.Color(0, 0, 0));
         continue;
       }
-      strip.setPixelColor(getNeoPixel(row, col), colors[pattern[row][col]]);
+      strip.setPixelColor(getNeoPixel(row, col, shiftRow, shiftColumn), colors[pattern[row][col]]);
     }
 
   }
@@ -121,46 +133,31 @@ void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], si
   delay(wait);
 }
 
+void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors, uint16_t wait)
+{
+  setPixelColorPattern(pattern, 0,0, colors, lenOfColors, wait);
+}
+
 void setup()
 {
-  //Serial.begin(57600);
-
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 }
 
 void loop()
 {
-  // uint32_t c1 = strip.Color(4, 0, 0);
-  // uint32_t c2 = strip.Color(0, 4, 0);
 
-  // setNeoPixelMatrix(1,3,c1);
-  // setNeoPixelMatrix(3,5,c2);
+  // setPixelColorPattern(pattern01, colors, 4, SPEED);
+  // setPixelColorPattern(pattern02, colors, 4, SPEED);
 
-  // setNeoPixelColor(3,5,c2);
-  // setNeoPixelColor(3,5,c000);
+  // setPixelColorPattern(pattern03, blueColors, 2, SPEED);
+  // setPixelColorPattern(pattern04, redColors, 2, SPEED);
+  // setPixelColorPattern(pattern05, greenColors, 2, SPEED);
 
-  uint32_t colors[4];
-  colors[0] = strip.Color(0,0,0);
-  colors[1] = strip.Color(0,4,0);
-  colors[2] = strip.Color(0,0,4);
-  colors[3] = strip.Color(4,0,0);
+  // setPixelColorPattern(pattern05, redBlueColors, 2, SPEED);
+  // setPixelColorPattern(pattern05, blueRedColors, 2, SPEED);
 
-  uint32_t redColors[2] = { strip.Color(0,0,0), strip.Color(4,0,0) };
-  uint32_t blueColors[2] = { strip.Color(0,0,0), strip.Color(0,0,4) };
-  uint32_t greenColors[2] = { strip.Color(0,0,0), strip.Color(0,4,0) };
-
-  uint32_t redBlueColors[2] = { strip.Color(0,0,4), strip.Color(4,0,0) };
-  uint32_t blueRedColors[2] = { strip.Color(4,0,0), strip.Color(0,0,4) };
-
-  setPixelColorPattern(pattern01, colors, 4, SPEED);
-  setPixelColorPattern(pattern02, colors, 4, SPEED);
-
-  setPixelColorPattern(pattern03, blueColors, 2, SPEED);
-  setPixelColorPattern(pattern04, redColors, 2, SPEED);
-  setPixelColorPattern(pattern05, greenColors, 2, SPEED);
-
-  setPixelColorPattern(pattern05, redBlueColors, 2, SPEED);
-  setPixelColorPattern(pattern05, blueRedColors, 2, SPEED);
+  setPixelColorPattern(pattern05, 0, 0, redBlueColors, 2, SPEED);
+  setPixelColorPattern(pattern05, 1, 0, redBlueColors, 2, SPEED);
 
 }
