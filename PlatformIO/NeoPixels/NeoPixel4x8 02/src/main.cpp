@@ -70,6 +70,14 @@ uint16_t pattern04[ROWS][COLUMNS] =
         {1, 0, 0, 1, 1, 0, 0, 1}
     };
 
+uint16_t pattern05[ROWS][COLUMNS] =
+    {
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1}
+    };
+
 uint16_t getNeoPixel(uint16_t row, uint16_t column, uint16_t offsetRow, uint16_t offsetColumn)
 {
   return COLUMNS * ((row + offsetRow) % ROWS) + (column + offsetColumn) % COLUMNS;
@@ -96,12 +104,10 @@ void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c)
 
 void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors)
 {
-
   for (uint16_t row = 0; row < ROWS; row++)
   {
     for (uint16_t col = 0; col < COLUMNS; col++)
     {
-      //strip.setPixelColor(getNeoPixel(row, col), colors[pattern[row][col]]);
       if(lenOfColors <= pattern[row][col]  || 0 > pattern[row][col])
       {
         strip.setPixelColor(getNeoPixel(row, col), strip.Color(0, 0, 0));
@@ -117,7 +123,7 @@ void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], si
 
 void setup()
 {
-  Serial.begin(57600);
+  //Serial.begin(57600);
 
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -144,16 +150,23 @@ void loop()
   uint32_t blueColors[2] = { strip.Color(0,0,0), strip.Color(0,0,4) };
   uint32_t greenColors[2] = { strip.Color(0,0,0), strip.Color(0,4,0) };
 
+  uint32_t redBlueColors[2] = { strip.Color(0,0,4), strip.Color(4,0,0) };
+  uint32_t blueRedColors[2] = { strip.Color(4,0,0), strip.Color(0,0,4) };
   //setPixelColorPattern(pattern01, colors, 4);
   //delay(SPEED);
   //setPixelColorPattern(pattern02, colors, 4);
   //delay(SPEED);
 
-  setPixelColorPattern(pattern02, blueColors, 2);
+  // setPixelColorPattern(pattern05, blueColors, 2);
+  // delay(SPEED);
+  // setPixelColorPattern(pattern05, redColors, 2);
+  // delay(SPEED);
+  // setPixelColorPattern(pattern05, greenColors, 2);
+  // delay(SPEED);
+
+  setPixelColorPattern(pattern05, redBlueColors, 2);
   delay(SPEED);
-  setPixelColorPattern(pattern03, redColors, 2);
-  delay(SPEED);
-  setPixelColorPattern(pattern04, greenColors, 2);
+  setPixelColorPattern(pattern05, blueRedColors, 2);
   delay(SPEED);
 
 }
