@@ -168,31 +168,41 @@ void loop()
     setPixelColorPattern(pattern01, 0, i, greenColors, 2, SPEED);
   }
 
+  for (size_t i = COLUMNS; i > 0; i--)
+  {
+    setPixelColorPattern(pattern01, 0, i - 1, greenColors, 2, SPEED);
+  }
+
   for (size_t i = 0; i < ROWS; i++)
   {
     setPixelColorPattern(pattern02, i, 0, blueColors, 2, SPEED);
   }
 
-  for (size_t i = 0; i < COLUMNS; i++)
+  for (size_t i = ROWS; i > 0; i--)
   {
-    for (size_t j = 0; j < ROWS; j++)
-    {
-      setPixelColorPattern(pattern03a, j, i, cRGBW, 5, SPEED);
-    }
+    setPixelColorPattern(pattern02, i - 1, 0, blueColors, 2, SPEED);
   }
 
-  for (size_t i = 0; i < COLUMNS; i++)
+  // for (size_t i = 0; i < COLUMNS; i++)
+  // {
+  //   for (size_t j = 0; j < ROWS; j++)
+  //   {
+  //     setPixelColorPattern(pattern03a, j, i, cRGBW, 5, SPEED);
+  //   }
+  // }
+
+  for (size_t i = 0; i < (10 * COLUMNS); i++)
   {
     setPixelColorPattern(pattern06, 0, -i, cRGBW, 5, SPEED);
   }
 
-  setPixelColorPattern(pattern02, cRGBW, 5, SPEED);
+  // setPixelColorPattern(pattern02, cRGBW, 5, SPEED);
 
-  setPixelColorPattern(pattern03, blueColors, 2, SPEED);
-  setPixelColorPattern(pattern04, redColors, 2, SPEED);
-  setPixelColorPattern(pattern05, greenColors, 2, SPEED);
+  // setPixelColorPattern(pattern03, blueColors, 2, SPEED);
+  // setPixelColorPattern(pattern04, redColors, 2, SPEED);
+  // setPixelColorPattern(pattern05, greenColors, 2, SPEED);
 
-  setPixelColorPattern(pattern05, 0, 0, redBlueColors, 2, SPEED);
-  setPixelColorPattern(pattern05, 1, 0, redBlueColors, 2, SPEED);
+  // setPixelColorPattern(pattern05, 0, 0, redBlueColors, 2, SPEED);
+  // setPixelColorPattern(pattern05, 1, 0, redBlueColors, 2, SPEED);
 
 }
