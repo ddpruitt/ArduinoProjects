@@ -39,4 +39,6 @@ void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c, uint16_t wait);
 void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint16_t shiftRow, uint16_t shiftColumn, uint32_t colors[], size_t lenOfColors, uint16_t wait);
 void setPixelColorPattern(uint16_t pattern[ROWS][COLUMNS], uint32_t colors[], size_t lenOfColors, uint16_t wait);
 
+void setPixelColorPatternMirrorVertical(uint16_t pattern[ROWS][COLUMNS], uint16_t shiftRow, uint16_t shiftColumn, uint32_t colors[], size_t lenOfColors, uint16_t wait);
+
 #endif // NEWPIXELMATRIX_INCLUDED

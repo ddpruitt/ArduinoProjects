@@ -66,6 +66,15 @@ uint16_t pattern06[ROWS][COLUMNS] =
         {0, 4, 3, 2, 1, 0, 0, 0}
     };
 
+uint16_t pattern07[ROWS][COLUMNS] =
+    {
+        {1, 2, 3, 4, 0, 0, 0, 0},
+        {1, 2, 3, 4, 0, 0, 0, 0},
+        {1, 2, 3, 4, 0, 0, 0, 0},
+        {1, 2, 3, 4, 0, 0, 0, 0},
+    };
+
+
 void setup()
 {
   strip.begin();
@@ -75,25 +84,28 @@ void setup()
 void loop()
 {
 
-  for (size_t i = 0; i < COLUMNS; i++)
-  {
-    setPixelColorPattern(pattern01, 0, i, greenColors, 2, SPEED);
-  }
+  setPixelColorPattern(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
+  setPixelColorPatternMirrorVertical(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
 
-  for (size_t i = COLUMNS; i > 0; i--)
-  {
-    setPixelColorPattern(pattern01, 0, i - 1, greenColors, 2, SPEED);
-  }
+  // for (size_t i = 0; i < COLUMNS; i++)
+  // {
+  //   setPixelColorPattern(pattern01, 0, i, greenColors, 2, SPEED);
+  // }
 
-  for (size_t i = 0; i < ROWS; i++)
-  {
-    setPixelColorPattern(pattern02, i, 0, blueColors, 2, SPEED);
-  }
+  // for (size_t i = COLUMNS; i > 0; i--)
+  // {
+  //   setPixelColorPattern(pattern01, 0, i - 1, greenColors, 2, SPEED);
+  // }
 
-  for (size_t i = ROWS; i > 0; i--)
-  {
-    setPixelColorPattern(pattern02, i - 1, 0, blueColors, 2, SPEED);
-  }
+  // for (size_t i = 0; i < ROWS; i++)
+  // {
+  //   setPixelColorPattern(pattern02, i, 0, blueColors, 2, SPEED);
+  // }
+
+  // for (size_t i = ROWS; i > 0; i--)
+  // {
+  //   setPixelColorPattern(pattern02, i - 1, 0, blueColors, 2, SPEED);
+  // }
 
   // for (size_t i = 0; i < COLUMNS; i++)
   // {
