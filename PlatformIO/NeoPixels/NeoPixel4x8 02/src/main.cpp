@@ -74,6 +74,13 @@ uint16_t pattern07[ROWS][COLUMNS] =
         {1, 2, 3, 4, 0, 0, 0, 0},
     };
 
+uint16_t pattern08[ROWS][COLUMNS] =
+    {
+        {1, 2, 3, 4, 4, 3, 2, 1},
+        {1, 2, 3, 4, 4, 3, 2, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };
 
 void setup()
 {
@@ -84,8 +91,11 @@ void setup()
 void loop()
 {
 
-  setPixelColorPattern(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
-  setPixelColorPatternMirrorVertical(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
+  // setPixelColorPattern(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
+  // setPixelColorPatternMirrorVertical(pattern07, 0, 0, cRGBW, 5, 3*SPEED);
+
+  setPixelColorPattern(pattern08, 0, 0, cRGBW, 5, 3*SPEED);
+  setPixelColorPatternMirrorHorizontal(pattern08, 0, 0, cRGBW, 5, 3*SPEED);
 
   // for (size_t i = 0; i < COLUMNS; i++)
   // {

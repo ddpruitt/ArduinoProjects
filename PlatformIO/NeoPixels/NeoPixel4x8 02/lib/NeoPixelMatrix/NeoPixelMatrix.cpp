@@ -54,6 +54,12 @@ uint16_t getNeoPixelMirrorVertical(uint16_t row, uint16_t column, uint16_t shift
   return getNeoPixel(row, mirror_column, shiftRow, shiftColumn);
 }
 
+uint16_t getNeoPixelMirrorHorizontal(uint16_t row, uint16_t column, uint16_t shiftRow, uint16_t shiftColumn)
+{
+  uint16_t mirror_row = ROWS - row - 1;
+  return getNeoPixel(mirror_row, column, shiftRow, shiftColumn);
+}
+
 void setNeoPixelColor(uint16_t row, uint16_t column, uint32_t c, uint16_t wait)
 {
   strip.setPixelColor(getNeoPixel(row,column), c);
@@ -98,6 +104,25 @@ void setPixelColorPatternMirrorVertical(uint16_t pattern[ROWS][COLUMNS], uint16_
         continue;
       }
       strip.setPixelColor(getNeoPixelMirrorVertical(row, col, shiftRow, shiftColumn), colors[pattern[row][col]]);
+    }
+
+  }
+  strip.show();
+  delay(wait);
+}
+
+void setPixelColorPatternMirrorHorizontal(uint16_t pattern[ROWS][COLUMNS], uint16_t shiftRow, uint16_t shiftColumn, uint32_t colors[], size_t lenOfColors, uint16_t wait)
+{
+  for (uint16_t row = 0; row < ROWS; row++)
+  {
+    for (uint16_t col = 0; col < COLUMNS; col++)
+    {
+      if(lenOfColors <= pattern[row][col]  || 0 > pattern[row][col])
+      {
+        strip.setPixelColor(getNeoPixelMirrorHorizontal(row, col, shiftRow, shiftColumn), strip.Color(0, 0, 0));
+        continue;
+      }
+      strip.setPixelColor(getNeoPixelMirrorHorizontal(row, col, shiftRow, shiftColumn), colors[pattern[row][col]]);
     }
 
   }
