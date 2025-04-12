@@ -25,8 +25,8 @@ void readDhtSensors(void)
 {
 
   // READ DATA
-  u8g
-  u8g.println("DHT11, ");
+  //u8g
+  //u8g.println("DHT11, ");
 
   int chk = DHT.read11(DHT11_PIN);
   switch (chk)
